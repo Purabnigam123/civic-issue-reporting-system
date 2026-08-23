@@ -1,0 +1,386 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CivicPulse - Report Issue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary": "#825100",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#004395",
+                    "outline-variant": "#c2c6d6",
+                    "inverse-surface": "#283044",
+                    "background": "#faf8ff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#131b2e",
+                    "secondary-fixed": "#6ffbbe",
+                    "surface-tint": "#005ac2",
+                    "surface": "#faf8ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#a36700",
+                    "primary-fixed-dim": "#adc6ff",
+                    "secondary": "#006c49",
+                    "on-surface-variant": "#424754",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e2e7ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-background": "#131b2e",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-container-highest": "#dae2fd",
+                    "primary": "#0058be",
+                    "surface-container": "#eaedff",
+                    "primary-container": "#2170e4",
+                    "on-primary-container": "#fefcff",
+                    "on-secondary-container": "#00714d",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f2f3ff",
+                    "inverse-primary": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#dae2fd",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-dim": "#d2d9f4",
+                    "outline": "#727785",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001a42",
+                    "surface-bright": "#faf8ff",
+                    "on-secondary-fixed": "#002113",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "section-gap": "96px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-xl": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-md": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "36px",
+                            {
+                                    "lineHeight": "44px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "30px",
+                            {
+                                    "lineHeight": "38px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-xl": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .civic-glow {
+            box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.05);
+        }
+        .civic-glow-hover:hover {
+            box-shadow: 0px 10px 30px rgba(15, 23, 42, 0.08);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto shadow-sm bg-surface transition-all duration-150">
+<div class="flex items-center gap-4">
+<img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicPulse Logo" class="h-8 w-auto object-contain">
+</div>
+<nav class="hidden md:flex gap-8 items-center h-full">
+<a class="h-full flex items-center text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="h-full flex items-center text-primary font-bold border-b-2 border-primary pb-1 opacity-80 transition-all duration-150" href="#">Report</a>
+<a class="h-full flex items-center text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">History</a>
+<a class="h-full flex items-center text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4 text-primary">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Header & Stepper Section -->
+<div class="mb-12">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Report an Issue</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">Select the category that best describes the problem.</p>
+<!-- Progress Tracker -->
+<div class="flex items-center justify-between w-full relative">
+<!-- Connecting Line Base -->
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-surface-container-high z-0"></div>
+<!-- Active Line -->
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-[0%] h-[2px] bg-primary z-0 transition-all duration-500"></div>
+<!-- Step 1: Category (Active) -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md ring-4 ring-background">
+                        1
+                    </div>
+<span class="font-label-md text-label-md text-primary hidden md:block">Category</span>
+</div>
+<!-- Step 2: Evidence (Inactive) -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md ring-4 ring-background">
+                        2
+                    </div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Evidence</span>
+</div>
+<!-- Step 3: Location (Inactive) -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md ring-4 ring-background">
+                        3
+                    </div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Location</span>
+</div>
+<!-- Step 4: Details (Inactive) -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md ring-4 ring-background">
+                        4
+                    </div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Details</span>
+</div>
+<!-- Step 5: Review (Inactive) -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md ring-4 ring-background">
+                        5
+                    </div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Review</span>
+</div>
+</div>
+</div>
+<!-- Reference Image Container (Based on prompt) -->
+<div class="mb-12 rounded-xl overflow-hidden civic-glow bg-surface border border-[#F1F5F9]">
+
+</div>
+<!-- Category Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Category Card 1 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="pothole">landscape</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Pothole</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Report deep holes, sunken covers, or severe road degradation.</p>
+</button>
+<!-- Category Card 2 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Broken Streetlight</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Flickering, completely out, or damaged street illumination.</p>
+</button>
+<!-- Category Card 3 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="delete">delete</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Garbage / Waste</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Illegal dumping, missed collections, or overflowing public bins.</p>
+</button>
+<!-- Category Card 4 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="water_drop">water_drop</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Drainage &amp; Sewage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Blocked drains, localized flooding, or sewage leaks.</p>
+</button>
+<!-- Category Card 5 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="plumbing">plumbing</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Water Supply</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Burst pipes, low pressure, or suspected water contamination.</p>
+</button>
+<!-- Category Card 6 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="construction">construction</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Public Infrastructure</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Damaged bus stops, broken benches, or playground hazards.</p>
+</button>
+<!-- Category Card 7 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="add_road">add_road</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Road Damage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Faded markings, damaged signs, or sidewalk issues.</p>
+</button>
+<!-- Category Card 8 -->
+<button class="flex flex-col items-start p-6 bg-surface-container-lowest rounded-xl border border-surface-container-highest civic-glow civic-glow-hover transition-all duration-200 text-left group focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="category">category</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Other Civic Issue</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Anything else that requires municipal attention and action.</p>
+</button>
+</div>
+<!-- Next Step Action -->
+<div class="mt-12 flex justify-end">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm flex items-center gap-2 opacity-50 cursor-not-allowed" disabled="">
+                Continue to Evidence
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden bg-surface shadow-[0px_-4px_20px_rgba(15,23,42,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="add_circle" data-weight="fill">add_circle</span>
+<span class="font-label-sm text-label-sm">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple script to handle category selection state
+        document.querySelectorAll('.grid button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Reset all
+                document.querySelectorAll('.grid button').forEach(btn => {
+                    btn.classList.remove('ring-2', 'ring-primary', 'bg-surface-container-low');
+                    btn.classList.add('bg-surface-container-lowest');
+                });
+                
+                // Set active
+                this.classList.add('ring-2', 'ring-primary', 'bg-surface-container-low');
+                this.classList.remove('bg-surface-container-lowest');
+
+                // Enable continue button
+                const continueBtn = document.querySelector('button:disabled');
+                if(continueBtn) {
+                    continueBtn.disabled = false;
+                    continueBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        });
+    </script>
+
+
+</body></html>

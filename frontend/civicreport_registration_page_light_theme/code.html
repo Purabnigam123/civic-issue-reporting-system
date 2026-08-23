@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CivicReport - Create Account</title>
+<!-- Font Setup -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Setup -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#0055ff',
+              light: '#e6eeff',
+              dark: '#0044cc'
+            },
+            surface: {
+              DEFAULT: '#faf8ff',
+              container: '#ffffff',
+              dim: '#d2d9f4',
+              border: '#e2e8f0'
+            },
+            text: {
+              main: '#1a1f36',
+              muted: '#64748b'
+            }
+          },
+          borderRadius: {
+            'card': '1rem',
+            'input': '0.5rem',
+            'btn': '0.5rem',
+            'badge': '9999px'
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.05)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface min-h-screen flex flex-col font-sans text-text-main antialiased selection:bg-primary-light selection:text-primary-dark">
+<!-- BEGIN: MainContent -->
+<main class="flex-grow flex items-center justify-center p-6 md:p-12 relative overflow-hidden">
+<!-- Background Decor (Optional subtlety) -->
+<div class="absolute inset-0 z-0 pointer-events-none opacity-40" style="background-image: radial-gradient(circle at 50% -20%, #e6eeff, transparent 50%);"></div>
+<div class="w-full max-w-[640px] z-10 flex flex-col items-center">
+<!-- Header Section -->
+<div class="mb-10 text-center flex flex-col items-center gap-4">
+<!-- Logo & Badge Container -->
+<div class="flex items-center gap-4 mb-2">
+<!-- Logo -->
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xl leading-none"><img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicReport Logo" class="w-full h-full object-contain"></div>
+<span class="text-2xl font-bold tracking-tight text-text-main font-extrabold">CivicReport</span>
+</a>
+<!-- Role Badge -->
+
+<div class="bg-surface-dim/30 text-text-main text-[10px] font-bold px-3 py-1 rounded-badge uppercase tracking-wider flex items-center gap-1 border border-surface-border">
+            Citizen Account Onboarding
+          </div>
+</div>
+<h1 class="text-3xl md:text-4xl font-extrabold text-text-main tracking-tight">Join the Civic Network</h1>
+<p class="text-text-muted text-sm md:text-base max-w-sm">Register to start logging geolocated complaints in your city</p>
+</div>
+<!-- Registration Card -->
+<div class="bg-surface-container w-full rounded-card shadow-soft border border-surface-border p-8 md:p-10 relative overflow-hidden">
+<!-- Top accent line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-primary to-purple-500"></div>
+<form action="#" class="space-y-6" method="POST">
+<!-- Full Name -->
+<div>
+<label class="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" for="fullName">Full Name</label>
+<input class="w-full bg-surface px-4 py-3 rounded-input border-surface-border border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-text-main placeholder-text-muted/60 font-medium" id="fullName" name="fullName" placeholder="Jane Doe" required="" type="text">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Email -->
+<div>
+<label class="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" for="email">Email Address</label>
+<input class="w-full bg-surface px-4 py-3 rounded-input border-surface-border border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-text-main placeholder-text-muted/60 font-medium" id="email" name="email" placeholder="jane@example.com" required="" type="email">
+</div>
+<!-- Phone -->
+<div>
+<label class="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" for="phone">Phone Number</label>
+<input class="w-full bg-surface px-4 py-3 rounded-input border-surface-border border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-text-main placeholder-text-muted/60 font-medium" id="phone" name="phone" placeholder="9876543210" required="" type="tel">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Password -->
+<div>
+<label class="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" for="password">Password</label>
+<input class="w-full bg-surface px-4 py-3 rounded-input border-surface-border border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-text-main placeholder-text-muted/60 font-medium" id="password" minlength="6" name="password" placeholder="Min 6 chars" required="" type="password">
+</div>
+<!-- Confirm Password -->
+<div>
+<label class="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" for="confirmPassword">Confirm Password</label>
+<input class="w-full bg-surface px-4 py-3 rounded-input border-surface-border border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-text-main placeholder-text-muted/60 font-medium" id="confirmPassword" minlength="6" name="confirmPassword" placeholder="Re-enter password" required="" type="password">
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full bg-gradient-to-r from-blue-500 to-primary hover:from-blue-600 hover:to-primary-dark text-white font-bold py-4 px-6 rounded-btn transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm" type="submit">
+              Create Citizen Account
+              <svg class="w-5 h-5" fill="none" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Login Link -->
+<div class="text-center pt-6 border-t border-surface-border mt-6">
+<p class="text-sm text-text-muted">
+              Already registered? 
+              <a class="font-bold text-primary hover:text-primary-dark transition-colors" href="#">Sign In to existing account</a>
+</p>
+</div>
+</form>
+</div>
+<!-- Footer Link -->
+<div class="mt-8">
+<a class="text-sm font-medium text-text-muted hover:text-primary flex items-center gap-2 transition-colors" href="#">
+<span class="">←</span> Return to Homepage
+        </a>
+</div>
+</div>
+</main>
+<!-- END: MainContent -->
+
+
+
+
+</body></html>

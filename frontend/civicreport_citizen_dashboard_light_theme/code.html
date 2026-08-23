@@ -1,0 +1,367 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CivicPulse - Citizen Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary": "#825100",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#004395",
+                    "outline-variant": "#c2c6d6",
+                    "inverse-surface": "#283044",
+                    "background": "#faf8ff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#131b2e",
+                    "secondary-fixed": "#6ffbbe",
+                    "surface-tint": "#005ac2",
+                    "surface": "#faf8ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#a36700",
+                    "primary-fixed-dim": "#adc6ff",
+                    "secondary": "#006c49",
+                    "on-surface-variant": "#424754",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e2e7ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-background": "#131b2e",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-container-highest": "#dae2fd",
+                    "primary": "#0058be",
+                    "surface-container": "#eaedff",
+                    "primary-container": "#2170e4",
+                    "on-primary-container": "#fefcff",
+                    "on-secondary-container": "#00714d",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f2f3ff",
+                    "inverse-primary": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#dae2fd",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-dim": "#d2d9f4",
+                    "outline": "#727785",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001a42",
+                    "surface-bright": "#faf8ff",
+                    "on-secondary-fixed": "#002113",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "section-gap": "96px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-xl": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-md": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "36px",
+                            {
+                                    "lineHeight": "44px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "30px",
+                            {
+                                    "lineHeight": "38px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-xl": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md selection:bg-primary selection:text-on-primary pb-24 md:pb-0 pt-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto shadow-sm bg-surface dark:bg-surface-container">
+<div class="flex items-center gap-2">
+<img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicPulse Logo" class="h-8 w-auto object-contain">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">CivicPulse</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-8 font-label-md text-label-md">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Dashboard</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Report</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">History</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4">
+<button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="User profile" class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-8 mb-section-gap">
+<!-- Welcome Section -->
+<section class="mb-12">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-2">Good morning, Demo Citizen</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Here is an overview of your civic engagement.</p>
+</section>
+<div class="grid grid-cols-1 gap-gutter">
+<!-- Left Column: Metrics & Quick Launcher -->
+<div class="flex flex-col gap-8">
+<!-- Overview Cards (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow duration-300 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Active Inquiries</h3>
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="pending_actions">pending_actions</span>
+</div>
+</div>
+<div class="font-headline-xl text-headline-xl text-primary">5</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow duration-300 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Resolved</h3>
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<div class="font-headline-xl text-headline-xl text-secondary">1</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow duration-300 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Total Subs</h3>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="receipt_long">receipt_long</span>
+</div>
+</div>
+<div class="font-headline-xl text-headline-xl text-on-surface">6</div>
+</div>
+</div>
+<!-- Quick Category Launcher -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)]">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Quick Category Launcher</h2>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="moving">moving</span>
+<span class="font-label-sm text-label-sm text-center">Pothole</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="lightbulb">lightbulb</span>
+<span class="font-label-sm text-label-sm text-center">Streetlight</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="delete">delete</span>
+<span class="font-label-sm text-label-sm text-center">Garbage</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="water_drop">water_drop</span>
+<span class="font-label-sm text-label-sm text-center">Drainage</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="plumbing">plumbing</span>
+<span class="font-label-sm text-label-sm text-center">Water</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="location_city">location_city</span>
+<span class="font-label-sm text-label-sm text-center">Infrastructure</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="warning">warning</span>
+<span class="font-label-sm text-label-sm text-center">Road Damage</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-lg bg-surface-container-low hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors duration-200 group text-on-surface-variant border border-transparent hover:border-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-sm text-label-sm text-center">Other</span>
+</button>
+</div>
+</div><div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)]">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Recent Complaints Feed</h2>
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">View All</a>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Feed Item 1 -->
+<div class="p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors duration-200 border border-transparent hover:border-outline-variant/30">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-2 py-1 rounded-full">Submitted</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">2 hrs ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Deep Pothole on Main St</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Large pothole forming near the intersection, dangerous for cyclists.</p>
+</div>
+<!-- Feed Item 2 -->
+<div class="p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors duration-200 border border-transparent hover:border-outline-variant/30">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-2 py-1 rounded-full">Under Review</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">1 day ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Missed Garbage Collection</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Entire block wasn't picked up on regular schedule yesterday.</p>
+</div>
+<!-- Feed Item 3 -->
+<div class="p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors duration-200 border border-transparent hover:border-outline-variant/30">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm px-2 py-1 rounded-full">Assigned</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">3 days ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Broken Streetlight</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Light has been out for a week, making the pathway very dark.</p>
+</div>
+<!-- Feed Item 4 -->
+<div class="p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors duration-200 border border-transparent hover:border-outline-variant/30">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-2 py-1 rounded-full">In Progress</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">1 week ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Park Bench Repair</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Wooden slats are broken on the bench near the playground.</p>
+</div>
+</div>
+</div>
+<!-- Reference Layout Image Container -->
+
+</div>
+<!-- Right Column: Recent Activity Feed -->
+
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden bg-surface dark:bg-surface-container-low shadow-[0px_-4px_20px_rgba(15,23,42,0.05)] rounded-t-xl font-label-sm text-label-sm pb-safe">
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 hover:bg-surface-container-high transition-transform duration-150 scale-95 opacity-80" href="#">
+<span class="material-symbols-outlined filled" data-icon="dashboard">dashboard</span>
+<span class="mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-transform duration-150 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="mt-1">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-transform duration-150 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-transform duration-150 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="mt-1">Profile</span>
+</a>
+</nav>
+<style>
+        /* Safe area padding for mobile notch devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .pb-safe {
+                padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+
+
+</body></html>

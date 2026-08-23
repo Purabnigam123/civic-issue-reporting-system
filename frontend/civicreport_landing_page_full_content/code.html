@@ -1,0 +1,444 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CivicReport - See It. Report It. Fix It.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dae2fd",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container": "#eaedff",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "inverse-primary": "#adc6ff",
+                        "tertiary-container": "#a36700",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#424754",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d2d9f4",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "inverse-on-surface": "#eef0ff",
+                        "error": "#ba1a1a",
+                        "outline": "#727785",
+                        "surface-container-high": "#e2e7ff",
+                        "secondary": "#006c49",
+                        "on-tertiary-container": "#fffbff",
+                        "background": "#faf8ff",
+                        "secondary-container": "#6cf8bb",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#283044",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-secondary-container": "#00714d",
+                        "primary": "#0058be",
+                        "surface-variant": "#dae2fd",
+                        "tertiary": "#825100",
+                        "on-primary-fixed": "#001a42",
+                        "primary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#131b2e",
+                        "primary-container": "#2170e4",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c2c6d6",
+                        "surface": "#faf8ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-fixed": "#002113",
+                        "surface-tint": "#005ac2",
+                        "primary-fixed": "#d8e2ff",
+                        "on-surface": "#131b2e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "section-gap": "96px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+                        "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    },
+                    boxShadow: {
+                        'level-1': '0px 4px 20px rgba(15, 23, 42, 0.05)',
+                        'level-2': '0px 10px 30px rgba(15, 23, 42, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-pattern {
+            background-image: radial-gradient(circle at 100% 0%, #eaedff 0%, transparent 50%),
+                              radial-gradient(circle at 0% 100%, #f2f3ff 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+<!-- Navigation -->
+<header class="bg-surface/80 backdrop-blur-md dark:bg-surface-container/80 full-width top-0 sticky shadow-sm z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-2 font-headline-sm text-headline-sm font-extrabold text-on-surface dark:text-surface-bright">
+<img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicReport Logo" class="w-8 h-8 object-contain">
+<span class="">CivicReport</span>
+
+</div>
+<!-- Nav Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-8 font-label-md text-label-md">
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary pb-1" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2 py-1" href="#features">Features</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2 py-1" href="#how-it-works">How it Works</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2 py-1" href="#categories">Categories</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2 py-1" href="#impact">Impact</a>
+</nav>
+<!-- Actions -->
+<div class="hidden md:flex items-center gap-4">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sign In</a>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all shadow-level-1 hover:shadow-level-2 transform hover:-translate-y-0.5 min-h-[48px] flex items-center justify-center">
+                    Get Started
+                </button>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-on-surface p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="relative pb-24 md:pb-32 overflow-hidden bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto grid md:grid-cols-2 gap-12 items-center md:pl-margin-desktop pl-margin-mobile">
+<!-- Content -->
+<div class="flex flex-col items-start gap-6 z-20">
+<div class="inline-flex items-center gap-2 bg-surface-container-highest text-on-primary-fixed-variant px-4 py-2 rounded-full font-label-sm text-label-sm shadow-level-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="eco">eco</span>
+<span class="">Empowering Communities Through Digital Governance</span>
+</div>
+<h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface">
+                    See It. Report It. <span class="text-primary">Fix It.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Report civic issues in your neighborhood with real-time GPS tracking, photo evidence, and end-to-end municipal status monitoring.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-container shadow-level-1 hover:shadow-level-2 transition-all min-h-[48px]">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+                        Report an Issue Now
+                    </button>
+<button class="bg-surface text-primary border border-outline-variant font-label-md text-label-md px-8 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low shadow-level-1 transition-all min-h-[48px]">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+                        Explore Citizen Demo
+                    </button>
+</div>
+<div class="flex items-center gap-4 mt-8 pt-6 border-t border-outline-variant/30 w-full">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A close-up portrait of a diverse, professional citizen in a modern urban environment, soft natural lighting, high key, professional and friendly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMJcs7Xc8SZsdqQzVbsEyzHY7KcajBX-8g_4V2BkxgR0Ny6mgiokbtedPz8j_1ubMm_HCrjtRpcngpmP4tYkflSuOfkJrwdCCXb3pzpLnj9Yy7qAubbUfIoNYVTgzpyBLeT59ZW0COZbZjV09a45HUVo4nzrQiY9aAXUbO9xb0QMPI4uvSBWQCpxnQKRvvzudECjEeTPMVVTmt3-4C4fhjaTfB-A_P2mA0BBdoJnaDSgfs2y0n77OeAA">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A close-up portrait of a community member smiling in a bright park setting, modern aesthetic, soft shadows, clear daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALnJsbg9vYnoG0c40nnwCiVTIV_cu6EgQ4VY00DztJut7Fqf2LBFd62v046ypRWiUrA1enRGI9t83rZxm7VaxU42rtKP7ybMbGnVrjH5P2oumxw2sGqOWeIyxiOY4bcjkH2N8BqO0jpNRAmtxj-7V83_EtU25D-Pd4B6PwVzgwA3uNpz3y5MpbOkH1iOTpq5ZilJecIkTJs-MEy_rdjaaVOjexLjw1zozCGUPZLSPyOpFL9BZ0WIXVYQ">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A close-up portrait of an active citizen user in front of a modern city backdrop, shallow depth of field, warm morning light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA41kHKF5fWU0enzO8MXrGCDdUu9e2sMi6CEfJMzvKJHVzJglztCMn_IKWKrB2Pco5RXZ2hITm5NitLp2rYRKWIHtKd6uXzFlhxmO9ERND-88G4Lu537BCsFmTdis43v5qeDi0Z-v41lekgtmslAq08Jr_R347vtEHJ0U5X27qH6jilR4PivSn2NIhD5BgVKRYkRzyuNo1idCzdlL1vkHRKvvU7g7QEcaHFi49INThWZA4M6s4hRM7sGg">
+</div>
+<div class="text-sm text-on-surface-variant">
+<p class="font-semibold text-on-surface">Join thousands of active citizens</p>
+<p class="">building better communities</p>
+</div>
+</div>
+</div>
+<!-- Hero Illustration -->
+<div class="relative w-full flex justify-center items-center lg:scale-110 z-0 pr-0 h-[480px]">
+<img alt="CivicReport App Mockup" class="max-w-full max-h-full object-contain absolute top-0 right-0 !max-w-none !h-full scale-[1.5] origin-top-right transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu-Mb4poUEhNQay4s2dZsZRz5ih8feimRPo3UAncJ1-OlxnBZc4a-6rE4UwlERFJyCMSL9udCSZdt1VRDNzQobebsat9sRnoKmVG1xZmKZbOEAvRkhMwiY4Kxvo7Uzq0q2iJ0GlI-Ejv4F1tdNaC-dwoQfFPhD6NAEvFo2WZtIYtsK7AhFX_VI71zLW0IE0E8h1UVAfbYzhNT_wki6IB32Jix196xubF0LpzEVXSkbojxma--AHfcwXJqZ2DDlFMQ3Pgk" style="transform: scale(1.2);">
+</div>
+</div>
+</section>
+<!-- Stats Section -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-12 relative z-20">
+<div class="bg-surface rounded-2xl shadow-level-2 p-8 border border-surface-container-highest">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-outline-variant/30">
+<div class="flex items-center gap-4 px-4">
+<div class="w-12 h-12 rounded-full bg-error-container/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">my_location</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">100%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">GPS Accuracy</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 pr-0">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">&lt; 2 min</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Filing Time</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">monitoring</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">Real-time</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Audit Trail</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4">
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">24/7</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Issue Tracking</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<!-- Supported Civic Categories Section -->
+<section class="py-24 bg-background" id="categories">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<span class="bg-primary-container/10 text-primary font-label-sm text-label-sm px-4 py-1 rounded-full uppercase tracking-wider">Department Matters</span>
+<h2 class="font-headline-xl text-headline-lg-mobile md:text-headline-lg mt-4 text-on-surface">
+        Supported <span class="text-primary">Civic</span> Categories
+      </h2>
+<p class="text-on-surface-variant mt-4 max-w-2xl mx-auto">Automated classification forwards reports straight to municipal engineering teams.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Category Card 1 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Pothole</h3>
+<p class="text-label-sm text-on-surface-variant">Road surface issues &amp; asphalt damage</p>
+</div>
+<!-- Category Card 2 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Broken Streetlight</h3>
+<p class="text-label-sm text-on-surface-variant">Non-functional or damaged lighting fixtures</p>
+</div>
+<!-- Category Card 3 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">delete</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Garbage / Waste</h3>
+<p class="text-label-sm text-on-surface-variant">Overflowing dumpsters &amp; uncollected waste</p>
+</div>
+<!-- Category Card 4 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">waves</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Drainage &amp; Sewage</h3>
+<p class="text-label-sm text-on-surface-variant">Blocked drains, waterlogging &amp; bad odors</p>
+</div>
+<!-- Category Card 5 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Water Supply</h3>
+<p class="text-label-sm text-on-surface-variant">Pipeline leaks, pressure drops &amp; contaminated water</p>
+</div>
+<!-- Category Card 6 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-error-container/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Public Infrastructure</h3>
+<p class="text-label-sm text-on-surface-variant">Damaged benches, parks &amp; bus stops</p>
+</div>
+<!-- Category Card 7 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">traffic</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Road Damage</h3>
+<p class="text-label-sm text-on-surface-variant">Cracking, sink, potholes &amp; speed bumps</p>
+</div>
+<!-- Category Card 8 -->
+<div class="bg-surface p-6 rounded-2xl border border-outline-variant/30 hover:shadow-level-2 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">more_horiz</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-2">Other Civic Issue</h3>
+<p class="text-label-sm text-on-surface-variant">General municipal concerns &amp; hazards</p>
+</div>
+</div>
+</div>
+</section>
+<!-- How CivicReport Works Section -->
+<section class="py-24 bg-surface-container-low" id="how-it-works">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<span class="bg-primary-container/10 text-primary font-label-sm text-label-sm px-4 py-1 rounded-full uppercase tracking-wider">Built on a simple process</span>
+<h2 class="font-headline-xl text-headline-lg-mobile md:text-headline-lg mt-4 text-on-surface">How CivicReport Works</h2>
+<p class="text-on-surface-variant mt-4">Four seamless steps from detection to official resolution</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+<!-- Process Card 1 -->
+<div class="relative flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-surface shadow-level-1 flex items-center justify-center text-primary mb-6 z-10">
+<span class="material-symbols-outlined text-3xl">photo_camera</span>
+</div>
+<span class="text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2">Phase 01</span>
+<h3 class="font-headline-sm text-on-surface mb-2">Capture Issue</h3>
+<p class="text-body-md text-on-surface-variant">Take a photo, add details and mark the location</p>
+<!-- Arrow Desktop -->
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px border-t-2 border-dashed border-outline-variant/50"></div>
+</div>
+<!-- Process Card 2 -->
+<div class="relative flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-surface shadow-level-1 flex items-center justify-center text-error mb-6 z-10">
+<span class="material-symbols-outlined text-3xl">location_on</span>
+</div>
+<span class="text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2">Phase 02</span>
+<h3 class="font-headline-sm text-on-surface mb-2">Geotag Location</h3>
+<p class="text-body-md text-on-surface-variant">Precise GPS coordinates automatically tag the map</p>
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px border-t-2 border-dashed border-outline-variant/50"></div>
+</div>
+<!-- Process Card 3 -->
+<div class="relative flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-surface shadow-level-1 flex items-center justify-center text-secondary mb-6 z-10">
+<span class="material-symbols-outlined text-3xl">send</span>
+</div>
+<span class="text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2">Phase 03</span>
+<h3 class="font-headline-sm text-on-surface mb-2">Track Progress</h3>
+<p class="text-body-md text-on-surface-variant">Real-time status updates from municipal teams</p>
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px border-t-2 border-dashed border-outline-variant/50"></div>
+</div>
+<!-- Process Card 4 -->
+<div class="relative flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-surface shadow-level-1 flex items-center justify-center text-primary mb-6 z-10">
+<span class="material-symbols-outlined text-3xl">check_circle</span>
+</div>
+<span class="text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2">Phase 04</span>
+<h3 class="font-headline-sm text-on-surface mb-2">Rapid Resolution</h3>
+<p class="text-body-md text-on-surface-variant">Issues get resolved faster with verified closure</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Transforming Municipal Governance Banner -->
+<section class="py-24">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="bg-gradient-to-r from-surface-container-low to-secondary-container/20 rounded-3xl overflow-hidden flex flex-col md:flex-row items-center">
+<div class="p-8 md:p-16 flex-1">
+<span class="bg-primary/10 text-primary font-label-sm text-label-sm px-4 py-1 rounded-full uppercase tracking-wider">Stronger Communities, Greater Possibilities</span>
+<h2 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl mt-6 text-on-surface">Transforming Municipal Governance</h2>
+<p class="text-body-lg text-on-surface-variant mt-6 mb-8 max-w-lg">Experience the working prototype built for seamless civic reporting and smarter governance.</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg flex items-center gap-2 hover:bg-primary-container transition-all shadow-level-1">
+          Launch Citizen Portal
+          <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 w-full h-full min-h-[300px] relative overflow-hidden md:flex-[1.5]"><img alt="City Illustration" class="w-full h-full object-cover object-right" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS4GXufMdPzJyokfrCxvZFYPgXsz-jAb5iksUFoqS5m3BO2kODUwkGBSe24lLc5QVD5TMgrV0Oe5hjVfWKAxJ1gV_pmYLXVBNNr7P2elghskmBttmFFwqks-rllTm6I95N55l9jJ4Dl40iLjB0rTM0Nj7ntT2D_3hXVRqknGNDnKRBH4iULudv_VAqMpwhWKBU170BUloO26Bo_ZhcMAX5HoPsijNBsuUUkgjNu20_GIasoGUmS7e1rzE85WWoioFnIz8"></div>
+</div>
+</div>
+</section><footer class="bg-surface dark:bg-surface-dim full-width border-t border-outline-variant/50 flat no shadows mt-section-gap">
+<div class="flex flex-col gap-unit w-full px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-outline-variant/30 pb-8">
+<div class="flex items-center gap-2 font-headline-sm text-headline-sm font-bold text-on-surface dark:text-surface-bright">
+<img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicReport Logo" class="w-8 h-8 object-contain">
+<span class="">CivicReport</span>
+
+</div>
+<nav class="flex flex-wrap justify-center gap-6 font-label-sm text-label-sm">
+<a class="text-primary font-semibold underline decoration-primary/30 underline-offset-4" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors" href="#">About</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors" href="#">Privacy</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors" href="#">Terms</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors" href="#">Contact</a>
+</nav>
+<div class="flex gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">public</span>
+<span class="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">share</span>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center pt-6 text-on-surface-variant font-body-md text-body-md text-sm">
+<p class="">Civic Issue Reporting System</p>
+<p class="mt-2 md:mt-0">© 2025 CivicReport — Empowering Communities Through Digital Governance</p>
+</div>
+<div class="text-center font-headline-sm text-headline-sm font-bold mt-4 text-on-surface opacity-50">
+                See It. Report It. Fix It.
+            </div>
+</div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+</body></html>

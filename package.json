@@ -1,0 +1,21 @@
+{
+  "name": "civic-issue-reporting-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Civic Issue Reporting System - Empowering Communities Through Digital Governance",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend/react-app && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend/react-app && npm run build",
+    "seed": "cd backend && npm run seed"
+  },
+  "keywords": [
+    "civic-tech",
+    "smart-city",
+    "complaint-reporting",
+    "governance"
+  ],
+  "author": "",
+  "license": "MIT"
+}

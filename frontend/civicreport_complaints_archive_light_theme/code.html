@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Citizen Complaints Archive - CivicPulse</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#6cf8bb",
+                        "tertiary": "#825100",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#004395",
+                        "outline-variant": "#c2c6d6",
+                        "inverse-surface": "#283044",
+                        "background": "#faf8ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#131b2e",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-tint": "#005ac2",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-container": "#a36700",
+                        "primary-fixed-dim": "#adc6ff",
+                        "secondary": "#006c49",
+                        "on-surface-variant": "#424754",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e2e7ff",
+                        "tertiary-fixed": "#ffddb8",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-background": "#131b2e",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container-highest": "#dae2fd",
+                        "primary": "#0058be",
+                        "surface-container": "#eaedff",
+                        "primary-container": "#2170e4",
+                        "on-primary-container": "#fefcff",
+                        "on-secondary-container": "#00714d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "inverse-primary": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-dim": "#d2d9f4",
+                        "outline": "#727785",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001a42",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-fixed": "#002113",
+                        "error": "#ba1a1a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "section-gap": "96px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "700" }],
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-lg-mobile": ["30px", { lineHeight: "38px", fontWeight: "700" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "headline-xl": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+                        "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+                        "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pt-20 pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto bg-surface dark:bg-surface-container shadow-sm font-headline-sm text-headline-sm font-label-md text-label-md">
+<div class="flex items-center gap-6 w-full">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed"><div class="flex items-center gap-2"><img src="https://lh3.googleusercontent.com/aida/AEtjO1WSejny5Njx9d_D-28NeLhbMg_XIaOr1NHt2ElgveUhML7Kd_aB4J7tjO5kc6StV_33X2BoD0gj9CPt4pkaArOQyuBs2eUvOwvzZjFi8UCioQOXo3jfYMpdmmoSq0JuNu4JKHlhEQpn4Tj5ADnz6ef_pRq5iuEtetFduKKVGMsQtz0-7U_c8j0HgxE3e2xGsAlPhRb7o9RKuqVAVxpLWxyIgm8FDGl76PbRDtwbenUybBq_-04pK69BTxep" alt="CivicPulse Logo" class="h-8 w-8 object-contain"><span class="">CivicPulse</span></div></span>
+<nav class="hidden md:flex gap-8 ml-8">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Report</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary transition-colors duration-200" href="#">History</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Profile</a>
+</nav>
+<div class="flex-1 flex justify-end items-center gap-4">
+<div class="hidden md:flex relative w-64">
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm text-on-surface-variant" placeholder="Search records..." type="text">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+</div>
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="User Profile" class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle" data-weight="fill">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Citizen Complaints Archive</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Access and track the historical record of civic reports, organized by status and department for complete municipal transparency.</p>
+</div>
+<div class="w-full md:w-auto relative">
+<div class="relative w-full md:w-80">
+<input class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-on-surface transition-all shadow-sm" placeholder="Search by ID, Category, or Location..." type="text">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+</div>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-3 mb-10 pb-4 border-b border-outline-variant/30">
+<button class="px-5 py-2 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-full shadow-sm hover:opacity-90 transition-opacity">All Records</button>
+<button class="px-5 py-2 bg-surface text-on-surface-variant border border-outline-variant/50 font-label-md text-label-md rounded-full hover:bg-surface-container-low transition-colors shadow-[0px_4px_20px_rgba(15,23,42,0.02)]">Active</button>
+<button class="px-5 py-2 bg-surface text-on-surface-variant border border-outline-variant/50 font-label-md text-label-md rounded-full hover:bg-surface-container-low transition-colors shadow-[0px_4px_20px_rgba(15,23,42,0.02)]">Resolved</button>
+<button class="px-5 py-2 bg-surface text-on-surface-variant border border-outline-variant/50 font-label-md text-label-md rounded-full hover:bg-surface-container-low transition-colors shadow-[0px_4px_20px_rgba(15,23,42,0.02)]">Reopened</button>
+</div>
+<!-- Bento Grid Layout for Complaints -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Featured / Recent Item (Spans larger) -->
+<div class="lg:col-span-8 bg-surface rounded-xl border border-outline-variant/30 p-6 flex flex-col md:flex-row gap-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow">
+<div class="w-full md:w-1/3 h-48 md:h-auto rounded-lg overflow-hidden bg-surface-container-low shrink-0 relative"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv8J7W_0tQHjwI6VTeFDukglRJMk-4b0uij-IrIoFuNrDLchpn6Q8ZW1F_OLaLI4JqFEPycZUpaBKV5adkVvVUNLZCHoCXl3gXGkTm_oJOiF0_fGEhD8nGum7ofgSGwCnS6jQSVVqoYteODgxUBqrTqcnz1cLvEeVkuE4RMbjiqKySAOHymXRA32QKEx75ZyuFoiluhAmPEwgV8K5iwXJB8qt781wE8u0hlWduRccIjEX8xSX8NVrlZw" alt="Dangerous pothole in urban road" class="w-full h-full object-cover rounded-lg"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-primary font-bold tracking-wider uppercase">#CMP-24-0892</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest text-primary-fixed-variant rounded-full font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Under Review
+                            </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-3">Severe Road Subsidence (Pothole)</h2>
+<div class="space-y-2 mb-4">
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="location_on">location_on</span>
+                                4200 Block of Westheimer Rd
+                            </div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="domain">domain</span>
+                                Dept. of Public Works
+                            </div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant/20">
+<div class="text-sm text-on-surface-variant">Reported: Oct 24, 2023</div>
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1">
+                            View Details <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Standard Items -->
+<div class="lg:col-span-4 bg-surface rounded-xl border border-outline-variant/30 p-6 flex flex-col shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="water_drop">water_drop</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-container/30 text-secondary rounded-full font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                        Resolved
+                    </span>
+</div>
+<div class="mb-4 flex-1">
+<div class="font-label-sm text-label-sm text-outline mb-1 uppercase tracking-wider">#CMP-24-0751</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Water Main Leak</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Continuous water pooling near intersection causing minor flooding.</p>
+</div>
+<div class="space-y-1 pt-4 border-t border-outline-variant/20 mb-4">
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Dept:</span> <span class="">Water &amp; Sewer</span></div>
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Date:</span> <span class="">Oct 18, 2023</span></div>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors">View Record</button>
+</div>
+<div class="lg:col-span-4 bg-surface rounded-xl border border-outline-variant/30 p-6 flex flex-col shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="park">park</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest text-primary-fixed-variant rounded-full font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Assigned
+                    </span>
+</div>
+<div class="mb-4 flex-1">
+<div class="font-label-sm text-label-sm text-outline mb-1 uppercase tracking-wider">#CMP-24-0810</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Fallen Tree Limb</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Large branch blocking pedestrian walkway in community park.</p>
+</div>
+<div class="space-y-1 pt-4 border-t border-outline-variant/20 mb-4">
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Dept:</span> <span class="">Parks &amp; Rec</span></div>
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Date:</span> <span class="">Oct 22, 2023</span></div>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors">View Record</button>
+</div>
+<div class="lg:col-span-4 bg-surface rounded-xl border border-outline-variant/30 p-6 flex flex-col shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-error-container/50 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-sm text-label-sm border border-outline-variant/50">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                        Submitted
+                    </span>
+</div>
+<div class="mb-4 flex-1">
+<div class="font-label-sm text-label-sm text-outline mb-1 uppercase tracking-wider">#CMP-24-0901</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Streetlight Outage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Multiple lights out along residential street causing safety concerns.</p>
+</div>
+<div class="space-y-1 pt-4 border-t border-outline-variant/20 mb-4">
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Dept:</span> <span class="">Utilities</span></div>
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Date:</span> <span class="">Oct 25, 2023</span></div>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors">View Record</button>
+</div>
+<div class="lg:col-span-4 bg-surface rounded-xl border border-outline-variant/30 p-6 flex flex-col shadow-[0px_4px_20px_rgba(15,23,42,0.05)] hover:shadow-[0px_10px_30px_rgba(15,23,42,0.08)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-container/30 text-secondary rounded-full font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                        Resolved
+                    </span>
+</div>
+<div class="mb-4 flex-1">
+<div class="font-label-sm text-label-sm text-outline mb-1 uppercase tracking-wider">#CMP-24-0612</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Missed Trash Collection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Entire block missed during regular scheduled pickup.</p>
+</div>
+<div class="space-y-1 pt-4 border-t border-outline-variant/20 mb-4">
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Dept:</span> <span class="">Sanitation</span></div>
+<div class="text-sm text-on-surface-variant flex justify-between"><span class="">Date:</span> <span class="">Oct 10, 2023</span></div>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors">View Record</button>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center items-center gap-2 mt-12">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low font-label-md">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low font-label-md">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low font-label-md">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden bg-surface dark:bg-surface-container-low shadow-[0px_-4px_20px_rgba(15,23,42,0.05)] rounded-t-xl font-label-sm text-label-sm">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+            Dashboard
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="add_circle">add_circle</span>
+            Report
+        </a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history" data-weight="fill">history</span>
+            History
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+            Profile
+        </a>
+</nav>
+
+
+</body></html>
