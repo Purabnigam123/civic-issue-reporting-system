@@ -9,12 +9,16 @@ const api = axios.create({
   },
 });
 
-// Attach Authorization header if token is stored
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('civic_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Let browser set the correct multipart boundary for FormData
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+      delete config.headers['content-type'];
     }
     return config;
   },

@@ -27,11 +27,11 @@ A full-stack civic-tech platform MVP that allows citizens to report civic issues
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS |
-| **Backend** | Node.js, Express.js, TypeScript |
-| **Database** | MongoDB, Mongoose |
-| **Auth** | JWT, bcryptjs |
-| **File Upload** | Multer (local storage) |
+| **Frontend** | React 19, Vite, JavaScript, Tailwind CSS |
+| **Backend** | Python, FastAPI, Uvicorn |
+| **Database** | MongoDB, Motor |
+| **Auth** | JWT, bcrypt |
+| **File Upload** | FastAPI multipart uploads (local storage) |
 | **Maps** | Leaflet + OpenStreetMap (free, no API key needed) |
 | **Geocoding** | Nominatim (OpenStreetMap, free) |
 
@@ -41,26 +41,13 @@ A full-stack civic-tech platform MVP that allows citizens to report civic issues
 
 ```
 civic-issue-reporting/
-├── frontend/              # Next.js frontend
-│   ├── app/               # App Router pages
-│   ├── components/        # React components
-│   │   ├── layout/        # Navbar, MobileNav, DashboardLayout
-│   │   ├── pages/         # Page-level components
-│   │   └── ui/            # Reusable UI (Button, Input, Badge, Toast...)
-│   ├── lib/               # API client, Auth context
-│   └── types/             # TypeScript interfaces
+├── frontend/react-app/    # Vite React frontend
+│   └── src/               # Pages, components, context and API services
 │
-├── backend/               # Express.js API
-│   ├── src/
-│   │   ├── config/        # Database & env config
-│   │   ├── controllers/   # Auth & Complaint controllers
-│   │   ├── middleware/     # Auth, Upload, Validation
-│   │   ├── models/        # User, Complaint, Counter
-│   │   ├── routes/        # API routes
-│   │   ├── services/      # Business logic
-│   │   ├── utils/         # Response helpers, errors
-│   │   ├── seed.ts        # Database seeder
-│   │   └── server.ts      # Entry point
+├── backend/               # FastAPI API
+│   ├── app/               # Routers, models, services and configuration
+│   ├── tests/             # Pytest suite
+│   ├── requirements.txt
 │   └── uploads/           # Uploaded files
 │
 └── README.md
@@ -72,7 +59,8 @@ civic-issue-reporting/
 
 ### Prerequisites
 
-- **Node.js** 18+ and npm
+- **Node.js** 20+ and npm
+- **Python** 3.11+ and pip
 - **MongoDB** (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
 
 ### 1. Clone the Repository
@@ -86,16 +74,17 @@ cd civic-issue-reporting
 
 ```bash
 cd backend
-npm install
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
 Create `.env` file (or copy from `.env.example`):
 
 ```env
-PORT=5000
 MONGODB_URI=mongodb://localhost:27017/civic-issue-reporting
-JWT_SECRET=your_jwt_secret_key_change_in_production
-CLIENT_URL=http://localhost:3000
+JWT_SECRET=replace_with_a_long_random_secret
+JWT_EXPIRES_MINUTES=1440
 ```
 
 > For MongoDB Atlas, replace `MONGODB_URI` with your connection string.
@@ -103,30 +92,17 @@ CLIENT_URL=http://localhost:3000
 ### 3. Frontend Setup
 
 ```bash
-cd frontend
+cd frontend/react-app
 npm install
 ```
 
 Create `.env.local` file (or copy from `.env.local.example`):
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000/api
 ```
 
 ---
-
-## 🗃️ Database Seeding
-
-Seed the database with demo data:
-
-```bash
-cd backend
-npm run seed
-```
-
-This creates:
-- **Demo Citizen** account
-- **5 sample complaints** with varied statuses
 
 ---
 
@@ -136,7 +112,7 @@ This creates:
 
 ```bash
 cd backend
-npm run dev
+uvicorn app.main:app --reload --port 5000
 ```
 
 Server starts at: `http://localhost:5000`
@@ -144,22 +120,13 @@ Server starts at: `http://localhost:5000`
 ### Start Frontend (Terminal 2)
 
 ```bash
-cd frontend
+cd frontend/react-app
 npm run dev
 ```
 
 App opens at: `http://localhost:3000`
 
 ---
-
-## 🎯 Demo Credentials
-
-| Field | Value |
-|-------|-------|
-| **Email** | `citizen@civic.local` |
-| **Password** | `Staff@123` |
-
-Or use the **"Continue as Demo Citizen"** button on the login page.
 
 ---
 
@@ -177,16 +144,19 @@ Or use the **"Continue as Demo Citizen"** button on the login page.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/complaints` | Create complaint (multipart, protected) |
+| POST | `/api/complaints` | Create complaint with image evidence (multipart, protected) |
 | GET | `/api/complaints/my` | Get my complaints (protected) |
 | GET | `/api/complaints/:id` | Get complaint details (protected) |
+| GET | `/api/complaints/track/:complaintId` | Public, redacted status tracking |
+| GET | `/api/complaints/public-stats` | Public aggregate statistics |
+| POST | `/api/ai/verify-issue` | AI-assisted image analysis |
 
 ---
 
 ## 📱 Demo Flow (< 3 minutes)
 
 1. Open `http://localhost:3000`
-2. Click **Login** → Use demo credentials or "Demo Citizen" button
+2. Click **Register** to create a citizen account, then sign in
 3. View **Citizen Dashboard** with stats and recent complaints
 4. Click **Report an Issue**
 5. Select a category (e.g., Pothole)
@@ -207,7 +177,7 @@ Or use the **"Continue as Demo Citizen"** button on the login page.
 | MongoDB connection error | Ensure MongoDB is running locally or Atlas URI is correct |
 | Backend won't start | Check `.env` file exists with valid `MONGODB_URI` |
 | Frontend API errors | Ensure backend is running on port 5000 |
-| Demo login fails | Run `npm run seed` in the backend directory |
+| Login fails | Confirm your account exists and that the API is running |
 | Map not loading | Check internet connection (uses OpenStreetMap tiles) |
 | Image upload fails | Ensure `backend/uploads/` directory exists |
 

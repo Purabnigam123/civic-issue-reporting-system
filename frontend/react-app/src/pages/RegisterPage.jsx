@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import logoImg from '../assets/images/logo.png';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import logoImg from "../assets/images/logo.png";
 
 const RegisterPage = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { register } = useAuth();
@@ -17,20 +17,30 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match. Please try again.');
+      setError("Passwords do not match. Please try again.");
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError("Password must be at least 6 characters.");
       return;
     }
 
     if (phone.length < 10) {
-      setError('Please provide a valid 10-digit phone number.');
+      setError("Please provide a valid 10-digit phone number.");
+      return;
+    }
+
+    if (!fullName.trim()) {
+      setError("Full name is required.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setError("Email is required.");
       return;
     }
 
@@ -38,13 +48,14 @@ const RegisterPage = () => {
 
     try {
       await register(fullName, email, phone, password);
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      console.error('Registration error:', err);
-      setError(
-        err.response?.data?.message ||
-        'Registration failed. Please check the information provided and try again.'
-      );
+      console.error("Registration error:", err);
+      // Show the error message from backend if available, otherwise show default
+      const errorMessage =
+        err.message ||
+        "Registration failed. Please check the information provided and try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -56,7 +67,10 @@ const RegisterPage = () => {
         {/* Background Decor */}
         <div
           className="absolute inset-0 z-0 pointer-events-none opacity-40"
-          style={{ backgroundImage: 'radial-gradient(circle at 50% -20%, #e6eeff, transparent 50%)' }}
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 50% -20%, #e6eeff, transparent 50%)",
+          }}
         ></div>
 
         <div className="w-full max-w-[640px] z-10 flex flex-col items-center">
@@ -67,9 +81,15 @@ const RegisterPage = () => {
               {/* Logo */}
               <Link className="flex items-center gap-2 group" to="/">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xl leading-none">
-                  <img src={logoImg} alt="CivicPulse Logo" className="w-full h-full object-contain" />
+                  <img
+                    src={logoImg}
+                    alt="CivicPulse Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-text-main font-extrabold">CivicPulse</span>
+                <span className="text-2xl font-bold tracking-tight text-text-main font-extrabold">
+                  CivicPulse
+                </span>
               </Link>
 
               {/* Role Badge */}
@@ -93,7 +113,9 @@ const RegisterPage = () => {
 
             {error && (
               <div className="mb-6 p-4 rounded-lg bg-error-container/30 border border-error/30 text-error flex items-start gap-3">
-                <span className="material-symbols-outlined text-xl shrink-0 mt-0.5">error</span>
+                <span className="material-symbols-outlined text-xl shrink-0 mt-0.5">
+                  error
+                </span>
                 <p className="text-sm font-medium">{error}</p>
               </div>
             )}
@@ -101,7 +123,10 @@ const RegisterPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" htmlFor="fullName">
+                <label
+                  className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2"
+                  htmlFor="fullName"
+                >
                   Full Name
                 </label>
                 <input
@@ -119,7 +144,10 @@ const RegisterPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Email */}
                 <div>
-                  <label className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" htmlFor="email">
+                  <label
+                    className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2"
+                    htmlFor="email"
+                  >
                     Email Address
                   </label>
                   <input
@@ -136,7 +164,10 @@ const RegisterPage = () => {
 
                 {/* Phone */}
                 <div>
-                  <label className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" htmlFor="phone">
+                  <label
+                    className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2"
+                    htmlFor="phone"
+                  >
                     Phone Number
                   </label>
                   <input
@@ -155,7 +186,10 @@ const RegisterPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Password */}
                 <div>
-                  <label className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" htmlFor="password">
+                  <label
+                    className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2"
+                    htmlFor="password"
+                  >
                     Password
                   </label>
                   <input
@@ -173,7 +207,10 @@ const RegisterPage = () => {
 
                 {/* Confirm Password */}
                 <div>
-                  <label className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2" htmlFor="confirmPassword">
+                  <label
+                    className="block text-xs font-bold text-text-main uppercase tracking-wider mb-2"
+                    htmlFor="confirmPassword"
+                  >
                     Confirm Password
                   </label>
                   <input
@@ -197,9 +234,22 @@ const RegisterPage = () => {
                   type="submit"
                   disabled={loading}
                 >
-                  {loading ? 'Creating Account...' : 'Create Citizen Account'}
-                  <svg className="w-5 h-5" fill="none" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                  {loading ? "Creating Account..." : "Create Citizen Account"}
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12H19M19 12L12 5M19 12L12 19"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                    />
                   </svg>
                 </button>
               </div>
@@ -207,8 +257,11 @@ const RegisterPage = () => {
               {/* Login Link */}
               <div className="text-center pt-6 border-t border-surface-border mt-6">
                 <p className="text-sm text-text-muted">
-                  Already registered?{' '}
-                  <Link className="font-bold text-primary hover:text-primary-dark transition-colors" to="/login">
+                  Already registered?{" "}
+                  <Link
+                    className="font-bold text-primary hover:text-primary-dark transition-colors"
+                    to="/login"
+                  >
                     Sign In to existing account
                   </Link>
                 </p>
@@ -218,7 +271,10 @@ const RegisterPage = () => {
 
           {/* Footer Link */}
           <div className="mt-8">
-            <Link className="text-sm font-medium text-text-muted hover:text-primary flex items-center gap-2 transition-colors" to="/">
+            <Link
+              className="text-sm font-medium text-text-muted hover:text-primary flex items-center gap-2 transition-colors"
+              to="/"
+            >
               <span>←</span> Return to Homepage
             </Link>
           </div>

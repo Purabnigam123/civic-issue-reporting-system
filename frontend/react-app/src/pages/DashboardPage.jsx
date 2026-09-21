@@ -4,36 +4,38 @@ import DashboardNavbar from '../components/layout/DashboardNavbar';
 import MobileBottomNav from '../components/layout/MobileBottomNav';
 import StatusBadge from '../components/ui/StatusBadge';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import { complaintService } from '../services/complaintService';
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const { lastEvent } = useNotifications();
   const navigate = useNavigate();
 
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        setLoading(true);
-        const data = await complaintService.getMyComplaints();
-        setComplaints(data.complaints || []);
-      } catch (err) {
-        console.error('Failed to load complaints:', err);
-        setError('Failed to fetch recent complaints from the server.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchComplaints = async () => {
+    try {
+      setLoading(true);
+      const data = await complaintService.getMyComplaints();
+      setComplaints(data.complaints || []);
+    } catch (err) {
+      console.error('Failed to load complaints:', err);
+      setError('Failed to fetch recent complaints from the server.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchComplaints();
-  }, []);
+  }, [lastEvent]);
 
   const totalSubs = complaints.length;
-  const resolvedCount = complaints.filter((c) => c.status === 'RESOLVED').length;
-  const activeCount = complaints.filter((c) => c.status !== 'RESOLVED').length;
+  const resolvedCount = complaints.filter((c) => c.status === 'RESOLVED' || c.status === 'VERIFIED').length;
+  const activeCount = complaints.filter((c) => c.status !== 'RESOLVED' && c.status !== 'VERIFIED').length;
 
   const quickCategories = [
     { key: 'pothole', label: 'Pothole', icon: 'moving' },

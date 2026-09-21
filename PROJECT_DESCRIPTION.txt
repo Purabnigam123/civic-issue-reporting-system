@@ -1,0 +1,940 @@
+================================================================================
+              CIVIC ISSUE REPORTING SYSTEM - FULL PROJECT DESCRIPTION
+================================================================================
+
+Project Title  : Civic Issue Reporting System (CivicPulse)
+Project Type   : Full-Stack Web Application (Minor/Academic Project)
+License        : MIT License
+Version        : 1.0.0
+
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+The Civic Issue Reporting System is a full-stack civic-technology platform
+designed to bridge the communication gap between citizens and local municipal
+authorities. It empowers citizens to report civic issues — such as potholes,
+broken streetlights, garbage accumulation, water leakage, and other urban
+infrastructure problems — through a streamlined digital interface with photo
+evidence, GPS-based geolocation, and real-time complaint tracking.
+
+The platform follows the principle: "See It. Report It. Fix It."
+
+By digitizing the traditionally manual complaint filing process, the system
+aims to improve civic service delivery, enhance transparency, and promote
+citizen participation in urban governance.
+
+
+================================================================================
+2. PROBLEM STATEMENT
+================================================================================
+
+Citizens in urban areas frequently encounter civic issues such as damaged
+roads, malfunctioning streetlights, overflowing garbage bins, and water
+supply disruptions. The existing methods of reporting these issues — such
+as helpline calls, physical visits to municipal offices, or paper-based
+complaint forms — are often:
+
+  - Time-consuming and inconvenient
+  - Lacking transparency (no tracking or status updates)
+  - Difficult to prioritize without photographic evidence
+  - Prone to misrouting across departments
+  - Lacking accountability for resolution timelines
+
+There is a clear need for a modern, accessible, and intelligent platform
+that allows citizens to submit geo-tagged, photo-verified complaints and
+track their resolution in real time.
+
+
+================================================================================
+3. OBJECTIVES
+================================================================================
+
+  1. Develop a user-friendly web platform for citizens to report civic
+     issues with supporting photographic evidence and precise GPS location.
+
+  2. Implement AI-powered image verification using a YOLOv8 object
+     detection model to validate and verify submitted complaint images.
+
+  3. Enable real-time complaint tracking with a visual status timeline
+     showing each stage from submission to resolution.
+
+  4. Build a multi-role system supporting Citizens, Zonal Officers,
+     Field Workers, and Administrators with role-specific dashboards.
+
+  5. Provide automated complaint routing based on category and geographic
+     zone to the appropriate municipal department.
+
+  6. Generate unique complaint IDs (CIV-XXXXX format) for easy reference
+     and public tracking.
+
+  7. Create a responsive, mobile-first design accessible from any device.
+
+  8. Establish a RESTful API architecture for extensibility and potential
+     integration with external government systems.
+
+
+================================================================================
+4. SCOPE OF THE PROJECT
+================================================================================
+
+IN SCOPE:
+  - Citizen registration, login, and profile management
+  - Multi-step complaint submission wizard
+  - Photo/image upload with camera capture support
+  - GPS-based location detection and map-based location selection
+  - Reverse geocoding (coordinates to human-readable address)
+  - AI-powered image verification using YOLOv8
+  - Complaint status lifecycle management
+  - Role-based access control (Citizen, Admin, Zonal Officer, Field Worker)
+  - Admin dashboard for complaint management and analytics
+  - Zonal officer dashboard for area-specific oversight
+  - Field worker interface for assignment and resolution
+  - Notification system for status updates
+  - Public complaint tracking by complaint ID
+  - Aggregate public statistics
+
+OUT OF SCOPE (Future Enhancements):
+  - SMS/WhatsApp notification integration
+  - Payment gateway for penalty collection
+  - Mobile native applications (Android/iOS)
+  - Predictive analytics and trend forecasting
+  - Integration with government ERP systems
+  - Multi-language / localization support
+
+
+================================================================================
+5. TECHNOLOGY STACK
+================================================================================
+
++-------------------+-----------------------------------------------------+
+| Layer             | Technologies Used                                   |
++-------------------+-----------------------------------------------------+
+| Frontend          | React 19, Vite, JavaScript (ES6+), Tailwind CSS     |
+| Backend           | Python 3.11+, FastAPI, Uvicorn (ASGI Server)        |
+| Database          | MongoDB (NoSQL), Motor (Async MongoDB Driver)       |
+| Authentication    | JWT (JSON Web Tokens), bcrypt password hashing      |
+| File Uploads      | FastAPI multipart uploads, local filesystem storage  |
+| AI/ML Model       | YOLOv8 (Ultralytics), OpenCV, NumPy, Pillow         |
+| Maps & Geocoding  | Leaflet.js + OpenStreetMap (free, no API key)        |
+| Reverse Geocoding | Nominatim (OpenStreetMap, free)                     |
+| State Management  | React Context API (AuthContext)                     |
+| HTTP Client       | Axios (frontend), httpx (backend testing)           |
+| Testing           | Pytest (backend), manual testing (frontend)         |
+| Version Control   | Git, GitHub                                         |
++-------------------+-----------------------------------------------------+
+
+
+================================================================================
+6. SYSTEM ARCHITECTURE
+================================================================================
+
+The application follows a classic three-tier client-server architecture:
+
+  +-----------------------------------------------------------------+
+  |                     PRESENTATION LAYER                          |
+  |         React 19 Single-Page Application (SPA)                  |
+  |   Vite dev server | Tailwind CSS | Leaflet Maps | Axios        |
+  +-----------------------------------------------------------------+
+                          |  HTTP/REST API Calls
+                          v
+  +-----------------------------------------------------------------+
+  |                     APPLICATION LAYER                           |
+  |              FastAPI Backend (Python, ASGI)                     |
+  |  Routers: auth, complaints, admin, zonal, worker, ai,          |
+  |           notifications, websocket                              |
+  |  Services: complaint_service, ai_service, status_service,      |
+  |            audit_service, district_service, notification_service,|
+  |            overdue_service, suspicious_service                  |
+  |  Middleware: CORS, JWT Authentication                           |
+  +-----------------------------------------------------------------+
+                          |  Async Database Queries (Motor)
+                          v
+  +-----------------------------------------------------------------+
+  |                       DATA LAYER                                |
+  |              MongoDB (NoSQL Document Database)                  |
+  |  Collections: users, complaints, counters, districts            |
+  +-----------------------------------------------------------------+
+                          |
+                          v  (On Image Upload)
+  +-----------------------------------------------------------------+
+  |                   AI/ML LAYER                                   |
+  |        YOLOv8 Object Detection Model (yolov8n.pt)              |
+  |  Detects: Potholes, Road Damage, Debris, Infrastructure Issues |
+  |  Output: Confidence Scores, Detected Objects, Verification     |
+  +-----------------------------------------------------------------+
+
+
+================================================================================
+7. DATABASE DESIGN
+================================================================================
+
+The system uses MongoDB, a NoSQL document database. The primary collections
+are:
+
+7.1 USERS COLLECTION
+---------------------
+  {
+    _id              : ObjectId (auto-generated)
+    name             : String
+    email            : String (unique, indexed)
+    phone            : String
+    password_hash    : String (bcrypt hashed)
+    role             : String ("citizen" | "admin" | "zonal_officer" | "worker")
+    created_at       : DateTime
+  }
+
+7.2 COMPLAINTS COLLECTION
+--------------------------
+  {
+    _id              : ObjectId (auto-generated)
+    complaint_id     : Integer (auto-increment, e.g., 10001)
+    citizen_id       : ObjectId (reference to users)
+    category         : String (pothole, streetlight, garbage, water, etc.)
+    description      : String
+    latitude         : Float
+    longitude        : Float
+    address          : String (reverse geocoded)
+    priority         : String (low, medium, high, critical)
+    status           : String (SUBMITTED, ASSIGNED, IN_PROGRESS,
+                               UNDER_REVIEW, RESOLVED, CLOSED)
+    image_path       : String (path to uploaded image)
+    audio_path       : String (optional, path to uploaded audio)
+    ai_verification  : Object {
+                         score: Float,
+                         detected_objects: Array,
+                         confidence: Float,
+                         verified: Boolean
+                       }
+    assigned_to      : ObjectId (reference to worker/department)
+    status_history   : Array of status change records
+    created_at       : DateTime
+    updated_at       : DateTime
+  }
+
+7.3 COUNTERS COLLECTION
+------------------------
+  {
+    _id              : String (e.g., "complaint_id")
+    sequence_value   : Integer (current auto-increment value)
+  }
+
+7.4 DISTRICTS COLLECTION
+-------------------------
+  {
+    _id              : ObjectId
+    name             : String
+    zone             : String
+    boundaries       : Object (geographic boundaries)
+  }
+
+
+================================================================================
+8. MODULE DESCRIPTIONS
+================================================================================
+
+8.1 AUTHENTICATION MODULE
+--------------------------
+  - User registration with input validation
+  - Secure password hashing using bcrypt (10 rounds)
+  - JWT token generation (HS256 algorithm, 24-hour expiry)
+  - Token-based session management (stateless)
+  - Protected route middleware for API endpoints
+  - Role-based access control (citizen, admin, zonal_officer, worker)
+
+  API Endpoints:
+    POST   /api/auth/register   - Register a new citizen
+    POST   /api/auth/login      - Authenticate and receive JWT token
+    GET    /api/auth/me          - Get current authenticated user profile
+
+8.2 COMPLAINT MANAGEMENT MODULE
+---------------------------------
+  - Multi-step complaint submission wizard:
+      Step 1: Select category (Pothole, Streetlight, Garbage, Water, etc.)
+      Step 2: Upload photographic evidence (JPG/PNG, max 10MB)
+      Step 3: Capture GPS location or select on interactive map
+      Step 4: Add description and set priority
+      Step 5: Review and submit
+  - Auto-generation of unique complaint IDs (CIV-10001 format)
+  - Category-based department routing and priority assignment
+  - Complaint status lifecycle tracking
+  - Filtering and searching complaints by status, category, and date
+  - Public complaint tracking by complaint ID (redacted view)
+  - Aggregate public statistics dashboard
+
+  API Endpoints:
+    POST   /api/complaints                    - Create new complaint (multipart)
+    GET    /api/complaints/my                 - Get authenticated user's complaints
+    GET    /api/complaints/:id                - Get complaint details
+    GET    /api/complaints/track/:complaintId - Public status tracking
+    GET    /api/complaints/public-stats       - Public aggregate statistics
+
+8.3 AI VERIFICATION MODULE
+----------------------------
+  - YOLOv8 (nano variant) object detection model integration
+  - Automatic image analysis on complaint submission
+  - Object detection for civic issues: potholes, road damage,
+    debris, infrastructure defects
+  - Verification scoring algorithm:
+      * Exact category match:    +80 points
+      * Related detection:       +15-20 points
+      * High confidence bonus:   +25 points
+      * Confidence penalty:      -7.5 points (if below 90%)
+      * Irrelevant objects:      -20 points
+  - Results stored with complaint record
+  - Manual review flagging for low-confidence submissions
+
+  API Endpoint:
+    POST   /api/ai/verify-issue   - AI-assisted image analysis
+
+8.4 ADMIN MODULE
+-----------------
+  - Centralized admin dashboard
+  - View all complaints across the system
+  - Assign complaints to departments/workers
+  - Update complaint status
+  - System analytics and reporting
+  - User management capabilities
+  - Overdue complaint tracking and escalation
+
+  API Router: /api/admin/*
+
+8.5 ZONAL OFFICER MODULE
+--------------------------
+  - Zone-specific dashboard
+  - View and manage complaints within assigned geographic zone
+  - Assign field workers to complaints
+  - Monitor resolution progress in zone
+  - Zone-level analytics
+
+  API Router: /api/zonal/*
+
+8.6 FIELD WORKER MODULE
+-------------------------
+  - View assigned complaints
+  - Update complaint status as work progresses
+  - Upload resolution photos/evidence
+  - Mark complaints as resolved
+  - Mobile-optimized interface
+
+  API Router: /api/worker/*
+
+8.7 NOTIFICATION MODULE
+-------------------------
+  - In-app notifications for status changes
+  - Real-time updates via WebSocket connections
+  - Notification history and management
+
+  API Routers:
+    /api/notifications/*
+    WebSocket endpoint for real-time updates
+
+8.8 LOCATION & MAPPING MODULE
+-------------------------------
+  - GPS auto-detection using browser Geolocation API
+  - Interactive map using Leaflet.js + OpenStreetMap tiles
+  - Click-to-select location on map
+  - Reverse geocoding via Nominatim API (coordinates to address)
+  - No API key required (fully open-source map stack)
+
+
+================================================================================
+9. FRONTEND ARCHITECTURE
+================================================================================
+
+The frontend is built as a React 19 Single-Page Application using Vite as
+the build tool and Tailwind CSS for styling.
+
+9.1 PAGE COMPONENTS
+---------------------
+  - LandingPage.jsx      : Public landing page with hero section, features
+                            overview, how-it-works guide, and call-to-action
+  - LoginPage.jsx         : User authentication form
+  - RegisterPage.jsx      : New user registration form with validation
+  - DashboardPage.jsx     : Citizen dashboard with stats, recent complaints,
+                            and activity overview
+  - ReportIssuePage.jsx   : Multi-step complaint submission wizard with
+                            category selection, image upload, map location
+                            picker, and review step
+  - ComplaintsPage.jsx    : Complaint history with filtering, searching,
+                            and sorting capabilities
+  - ComplaintDetailPage.jsx : Detailed complaint view with status timeline,
+                              AI verification results, and department info
+  - ProfilePage.jsx       : User profile management and settings
+
+  Admin Pages (pages/admin/):
+    - Admin dashboard and management interfaces
+
+  Zonal Pages (pages/zonal/):
+    - Zonal officer dashboards
+
+  Worker Pages (pages/worker/):
+    - Field worker task management interfaces
+
+9.2 REUSABLE COMPONENTS
+-------------------------
+  - ProtectedRoute.jsx         : Route guard for authenticated users
+  - RoleProtectedRoute.jsx     : Route guard for role-based access
+  - TrackComplaintModal.jsx    : Modal for public complaint tracking
+  - CivicAnalyticsSection.jsx  : Analytics and statistics visualization
+  - Layout components           : Header, Navbar, Footer, Sidebar
+
+9.3 SERVICES (API LAYER)
+--------------------------
+  - api.js               : Axios instance configuration with base URL,
+                            interceptors, and auth token management
+  - authService.js        : Authentication API calls (register, login, me)
+  - complaintService.js   : Complaint CRUD and tracking API calls
+  - adminService.js       : Admin management API calls
+  - zonalService.js       : Zonal officer API calls
+  - workerService.js      : Field worker API calls
+
+9.4 STATE MANAGEMENT
+----------------------
+  - AuthContext (context/) : React Context for global authentication state
+    * Stores current user and JWT token
+    * Provides login(), register(), logout(), getMe() functions
+    * Persists auth state in localStorage
+    * Consumed by components via useAuth() custom hook
+
+
+================================================================================
+10. BACKEND ARCHITECTURE
+================================================================================
+
+The backend is built with FastAPI (Python) running on Uvicorn ASGI server.
+
+10.1 APPLICATION ENTRY POINT
+------------------------------
+  - main.py : FastAPI application initialization
+    * Lifespan management (MongoDB connect/disconnect)
+    * CORS middleware configuration
+    * Router registration (auth, complaints, admin, zonal, worker,
+      ai, notifications, websocket)
+    * Static file serving for uploads
+    * Health check endpoint (/api/health)
+    * Custom 404 error handler
+
+10.2 ROUTERS (API ENDPOINTS)
+------------------------------
+  - auth.py           : Authentication endpoints (register, login, me)
+  - complaints.py     : Complaint CRUD, tracking, and statistics
+  - admin.py          : Admin management and analytics
+  - zonal.py          : Zonal officer operations
+  - worker.py         : Field worker operations
+  - ai.py             : AI image verification endpoint
+  - notifications.py  : Notification management
+  - websocket.py      : WebSocket real-time communication
+
+10.3 MODELS (DATABASE SCHEMAS)
+-------------------------------
+  - user.py       : User document model
+  - complaint.py  : Complaint document model with status history
+  - counter.py    : Auto-increment counter model
+  - district.py   : District/zone geographic model
+
+10.4 SCHEMAS (PYDANTIC VALIDATION)
+------------------------------------
+  - auth.py       : UserCreate, UserLogin, UserResponse schemas
+  - complaint.py  : ComplaintCreate, ComplaintResponse schemas
+  - ai.py         : AI verification request/response schemas
+
+10.5 SERVICES (BUSINESS LOGIC)
+--------------------------------
+  - complaint_service.py    : Core complaint operations
+  - ai_service.py           : YOLO model loading and inference
+  - status_service.py       : Status lifecycle management
+  - audit_service.py        : Activity logging and audit trails
+  - district_service.py     : Geographic zone management
+  - notification_service.py : Notification creation and delivery
+  - overdue_service.py      : SLA monitoring and escalation
+  - suspicious_service.py   : Fraud/duplicate detection
+
+10.6 CONFIGURATION
+--------------------
+  - config/db.py  : MongoDB async connection management (Motor)
+  - config/env.py : Environment variable configuration
+
+10.7 MIDDLEWARE
+-----------------
+  - CORS middleware for cross-origin requests
+  - JWT authentication middleware
+
+
+================================================================================
+11. API DESIGN
+================================================================================
+
+The system exposes a RESTful API following standard conventions:
+
+  Base URL: http://localhost:5000/api
+
+  +----------+---------------------------------------+-----------------------------+
+  | Method   | Endpoint                              | Description                 |
+  +----------+---------------------------------------+-----------------------------+
+  | POST     | /api/auth/register                    | Register new citizen        |
+  | POST     | /api/auth/login                       | Login & get JWT token       |
+  | GET      | /api/auth/me                          | Get current user (auth)     |
+  | POST     | /api/complaints                       | Create complaint (multipart)|
+  | GET      | /api/complaints/my                    | Get my complaints (auth)    |
+  | GET      | /api/complaints/:id                   | Get complaint details (auth)|
+  | GET      | /api/complaints/track/:complaintId    | Public status tracking      |
+  | GET      | /api/complaints/public-stats          | Public aggregate stats      |
+  | POST     | /api/ai/verify-issue                  | AI image verification       |
+  | GET      | /api/health                           | API health check            |
+  +----------+---------------------------------------+-----------------------------+
+
+  Authentication: Bearer token in Authorization header
+  Content Types: application/json, multipart/form-data (file uploads)
+  Error Format: { "success": false, "message": "Error description" }
+
+
+================================================================================
+12. COMPLAINT STATUS LIFECYCLE
+================================================================================
+
+  SUBMITTED  -->  ASSIGNED  -->  IN_PROGRESS  -->  UNDER_REVIEW  -->  RESOLVED  -->  CLOSED
+
+  Stage 1 - SUBMITTED     : Citizen submits a new complaint
+  Stage 2 - ASSIGNED      : Admin/system assigns to a department/worker
+  Stage 3 - IN_PROGRESS   : Field worker begins resolution work
+  Stage 4 - UNDER_REVIEW  : Supervisor quality check
+  Stage 5 - RESOLVED      : Issue fixed, resolution evidence uploaded
+  Stage 6 - CLOSED        : Citizen reviews and marks as complete
+
+  Each status transition is logged with:
+    - Timestamp
+    - Changed by (user ID)
+    - Previous status
+    - New status
+    - Optional notes/comments
+
+
+================================================================================
+13. AI-POWERED IMAGE VERIFICATION
+================================================================================
+
+The system integrates YOLOv8 (You Only Look Once, version 8) nano model
+for real-time object detection on uploaded complaint images.
+
+  Model: yolov8n.pt (YOLOv8 Nano - ~6.5 MB)
+  Framework: Ultralytics
+  Dependencies: OpenCV (headless), NumPy, Pillow
+
+  Process:
+    1. Citizen uploads a photo with the complaint
+    2. Image is preprocessed (resized to 640x640, normalized)
+    3. YOLOv8 model runs inference (object detection)
+    4. Detected objects are extracted with confidence scores
+    5. Objects are matched against the selected complaint category
+    6. A verification score (0-100%) is computed
+    7. Results are stored with the complaint record
+
+  Verification Outcomes:
+    - VERIFIED (score >= 70%)      : Image matches complaint category
+    - MANUAL REVIEW (score < 70%)  : Image requires human verification
+
+  This AI verification helps:
+    - Reduce false or spam complaints
+    - Prioritize genuine issues
+    - Speed up the review process for administrators
+
+
+================================================================================
+14. SECURITY MEASURES
+================================================================================
+
+  1. Password Security
+     - Passwords hashed using bcrypt with 10 salt rounds
+     - Plain-text passwords never stored in the database
+
+  2. Authentication
+     - JWT tokens with HS256 algorithm
+     - 24-hour token expiry
+     - Token required for all protected endpoints
+     - Stateless authentication (no server-side sessions)
+
+  3. Input Validation
+     - Pydantic schema validation on all API inputs
+     - Frontend form validation before submission
+     - File type and size validation for uploads
+
+  4. CORS Protection
+     - Restricted to specific allowed origins
+     - Credentials support enabled
+
+  5. File Upload Security
+     - File type restrictions (JPEG/PNG for images)
+     - File size limits (max 10MB)
+     - Server-generated filenames to prevent path traversal
+
+  6. Role-Based Access Control
+     - Four distinct roles: citizen, admin, zonal_officer, worker
+     - Role-protected routes on both frontend and backend
+     - Endpoint-level authorization checks
+
+
+================================================================================
+15. USER ROLES AND PERMISSIONS
+================================================================================
+
+  +------------------+--------------------------------------------------+
+  | Role             | Permissions                                      |
+  +------------------+--------------------------------------------------+
+  | Citizen          | Register, login, submit complaints, upload        |
+  |                  | evidence, track complaint status, view history,   |
+  |                  | manage profile, rate resolution                  |
+  +------------------+--------------------------------------------------+
+  | Admin            | All citizen permissions + view all complaints,    |
+  |                  | assign to departments, update any status,         |
+  |                  | manage users, view system analytics, handle       |
+  |                  | escalations, manage zones                        |
+  +------------------+--------------------------------------------------+
+  | Zonal Officer    | View zone-specific complaints, assign field       |
+  |                  | workers, monitor zone progress, zone analytics   |
+  +------------------+--------------------------------------------------+
+  | Field Worker     | View assigned complaints, update status,          |
+  |                  | upload resolution evidence, mark resolved         |
+  +------------------+--------------------------------------------------+
+
+
+================================================================================
+16. KEY FEATURES IN DETAIL
+================================================================================
+
+16.1 MULTI-STEP REPORT WIZARD
+  The complaint submission process is divided into intuitive steps:
+    Step 1 - Category Selection : Choose from predefined categories like
+             Pothole, Streetlight, Garbage, Water Supply, Drainage, etc.
+    Step 2 - Evidence Upload    : Upload photo evidence (JPG/PNG) or
+             capture directly from device camera
+    Step 3 - Location Capture   : Auto-detect GPS coordinates or manually
+             pick location on an interactive Leaflet/OpenStreetMap
+    Step 4 - Details            : Add description, set priority level
+    Step 5 - Review & Submit    : Review all entered information before
+             final submission
+
+16.2 INTERACTIVE MAP INTEGRATION
+  - Leaflet.js with OpenStreetMap tiles (no API key required)
+  - One-click GPS location detection via browser Geolocation API
+  - Click-on-map to manually select/adjust complaint location
+  - Reverse geocoding via Nominatim to convert coordinates to address
+  - Map markers with complaint details on dashboards
+
+16.3 REAL-TIME TRACKING
+  - Unique complaint ID (CIV-XXXXX) for easy reference
+  - Visual status timeline showing complaint progression
+  - Status badge indicators with color coding:
+      SUBMITTED    - Gray
+      ASSIGNED     - Blue
+      IN_PROGRESS  - Orange
+      UNDER_REVIEW - Yellow
+      RESOLVED     - Green
+      CLOSED       - Purple
+  - Public tracking endpoint (no login required)
+
+16.4 RESPONSIVE DESIGN
+  - Mobile-first approach using Tailwind CSS
+  - Responsive layouts for all screen sizes
+  - Touch-friendly interface elements
+  - Camera capture support on mobile devices
+
+
+================================================================================
+17. PROJECT STRUCTURE (DIRECTORY TREE)
+================================================================================
+
+  civic-issue-reporting-system/
+  |
+  +-- package.json                 # Root project config and scripts
+  +-- .gitignore                   # Git ignore rules
+  +-- README.md                    # Project documentation
+  +-- HOW_IT_WORKS.md              # Detailed system documentation
+  +-- FIXES_SUMMARY.md             # Bug fixes and changelog
+  +-- PROJECT_DESCRIPTION.txt      # This file
+  +-- yolov8n.pt                   # YOLOv8 Nano model weights
+  +-- minorsyn.pdf                 # Synopsis document
+  |
+  +-- backend/                     # FastAPI Backend
+  |   +-- requirements.txt         # Python dependencies
+  |   +-- .env                     # Environment variables
+  |   +-- .env.example             # Environment template
+  |   +-- reset_db.py              # Database reset utility
+  |   +-- seed_admin_accounts.py   # Admin account seeding script
+  |   +-- seed_demo_complaints.py  # Demo data seeding script
+  |   +-- yolov8n.pt               # YOLO model (backend copy)
+  |   |
+  |   +-- app/                     # Application package
+  |   |   +-- main.py              # FastAPI app entry point
+  |   |   +-- config/              # Configuration (DB, env)
+  |   |   +-- database/            # Database utilities
+  |   |   +-- dependencies/        # Dependency injection
+  |   |   +-- middleware/           # Custom middleware
+  |   |   +-- models/              # MongoDB document models
+  |   |   |   +-- user.py
+  |   |   |   +-- complaint.py
+  |   |   |   +-- counter.py
+  |   |   |   +-- district.py
+  |   |   +-- routers/             # API route handlers
+  |   |   |   +-- auth.py
+  |   |   |   +-- complaints.py
+  |   |   |   +-- admin.py
+  |   |   |   +-- zonal.py
+  |   |   |   +-- worker.py
+  |   |   |   +-- ai.py
+  |   |   |   +-- notifications.py
+  |   |   |   +-- websocket.py
+  |   |   +-- schemas/             # Pydantic validation schemas
+  |   |   |   +-- auth.py
+  |   |   |   +-- complaint.py
+  |   |   |   +-- ai.py
+  |   |   +-- services/            # Business logic services
+  |   |   |   +-- complaint_service.py
+  |   |   |   +-- ai_service.py
+  |   |   |   +-- status_service.py
+  |   |   |   +-- audit_service.py
+  |   |   |   +-- district_service.py
+  |   |   |   +-- notification_service.py
+  |   |   |   +-- overdue_service.py
+  |   |   |   +-- suspicious_service.py
+  |   |   +-- utils/               # Utility functions
+  |   |
+  |   +-- tests/                   # Pytest test suite
+  |   |   +-- test_backend.py
+  |   |
+  |   +-- uploads/                 # Uploaded files directory
+  |
+  +-- frontend/                    # Frontend Application(s)
+  |   +-- react-app/               # Main React Application
+  |   |   +-- package.json         # Node.js dependencies
+  |   |   +-- vite.config.js       # Vite build configuration
+  |   |   +-- tailwind.config.js   # Tailwind CSS configuration
+  |   |   +-- postcss.config.js    # PostCSS configuration
+  |   |   +-- index.html           # HTML entry point
+  |   |   +-- .env.local           # Frontend environment variables
+  |   |   |
+  |   |   +-- src/                 # Source code
+  |   |   |   +-- main.jsx         # React entry point
+  |   |   |   +-- App.jsx          # Root component with routing
+  |   |   |   +-- App.css          # Global styles
+  |   |   |   +-- index.css        # Tailwind imports
+  |   |   |   |
+  |   |   |   +-- pages/           # Page components
+  |   |   |   |   +-- LandingPage.jsx
+  |   |   |   |   +-- LoginPage.jsx
+  |   |   |   |   +-- RegisterPage.jsx
+  |   |   |   |   +-- DashboardPage.jsx
+  |   |   |   |   +-- ReportIssuePage.jsx
+  |   |   |   |   +-- ComplaintsPage.jsx
+  |   |   |   |   +-- ComplaintDetailPage.jsx
+  |   |   |   |   +-- ProfilePage.jsx
+  |   |   |   |   +-- admin/       # Admin pages
+  |   |   |   |   +-- zonal/       # Zonal officer pages
+  |   |   |   |   +-- worker/      # Field worker pages
+  |   |   |   |
+  |   |   |   +-- components/      # Reusable components
+  |   |   |   |   +-- ProtectedRoute.jsx
+  |   |   |   |   +-- RoleProtectedRoute.jsx
+  |   |   |   |   +-- TrackComplaintModal.jsx
+  |   |   |   |   +-- CivicAnalyticsSection.jsx
+  |   |   |   |   +-- layout/      # Layout components
+  |   |   |   |   +-- ui/          # UI primitives
+  |   |   |   |   +-- admin/       # Admin components
+  |   |   |   |   +-- zonal/       # Zonal components
+  |   |   |   |   +-- worker/      # Worker components
+  |   |   |   |   +-- notifications/ # Notification components
+  |   |   |   |
+  |   |   |   +-- context/         # React Context providers
+  |   |   |   |
+  |   |   |   +-- services/        # API service modules
+  |   |   |   |   +-- api.js
+  |   |   |   |   +-- authService.js
+  |   |   |   |   +-- complaintService.js
+  |   |   |   |   +-- adminService.js
+  |   |   |   |   +-- zonalService.js
+  |   |   |   |   +-- workerService.js
+  |   |   |   |
+  |   |   |   +-- assets/          # Static assets
+  |   |   |
+  |   |   +-- public/              # Public static files
+  |   |   +-- dist/                # Production build output
+  |
+  +-- images/                      # Project screenshots/diagrams
+
+
+================================================================================
+18. SETUP AND INSTALLATION
+================================================================================
+
+PREREQUISITES:
+  - Node.js 20+ and npm
+  - Python 3.11+ and pip
+  - MongoDB (local installation or MongoDB Atlas cloud)
+
+STEP 1: Clone the Repository
+  git clone <repository-url>
+  cd civic-issue-reporting-system
+
+STEP 2: Backend Setup
+  cd backend
+  python -m venv .venv
+  .venv\Scripts\activate          (Windows)
+  source .venv/bin/activate       (macOS/Linux)
+  pip install -r requirements.txt
+
+  Create .env file:
+    MONGODB_URI=mongodb://localhost:27017/civic-issue-reporting
+    JWT_SECRET=replace_with_a_long_random_secret
+    JWT_EXPIRES_MINUTES=1440
+
+STEP 3: Frontend Setup
+  cd frontend/react-app
+  npm install
+
+  Create .env.local file:
+    VITE_API_URL=http://localhost:5000/api
+
+STEP 4: Start Backend Server
+  cd backend
+  uvicorn app.main:app --reload --port 5000
+  (Server starts at http://localhost:5000)
+
+STEP 5: Start Frontend Dev Server
+  cd frontend/react-app
+  npm run dev
+  (App opens at http://localhost:3000 or http://localhost:5173)
+
+OPTIONAL: Seed Demo Data
+  cd backend
+  python seed_admin_accounts.py
+  python seed_demo_complaints.py
+
+
+================================================================================
+19. TESTING
+================================================================================
+
+Backend Testing:
+  - Framework: Pytest
+  - Test file: backend/tests/test_backend.py
+  - Run tests: cd backend && pytest tests/ -v
+
+Test Coverage:
+  - User registration and login endpoints
+  - Complaint creation and retrieval
+  - Authentication middleware (valid/invalid tokens)
+  - Input validation edge cases
+  - File upload handling
+  - AI verification endpoint
+
+
+================================================================================
+20. DEMO FLOW (< 3 MINUTES)
+================================================================================
+
+  1.  Open http://localhost:3000 in a browser
+  2.  View the public landing page
+  3.  Click "Register" and create a citizen account
+  4.  Log in with the new credentials
+  5.  View the Citizen Dashboard with stats and activity
+  6.  Click "Report an Issue"
+  7.  Select a category (e.g., Pothole)
+  8.  Upload a photo of the issue
+  9.  Detect GPS location or select on map
+  10. Add a description and set priority
+  11. Review all details and click "Submit"
+  12. See the generated Complaint ID (CIV-XXXXX)
+  13. Go to "My Complaints" to view complaint history
+  14. Click a complaint to see full details and status timeline
+  15. Use the "Track Complaint" feature with the complaint ID
+
+
+================================================================================
+21. FUTURE ENHANCEMENTS
+================================================================================
+
+  1.  AI-Powered Issue Classification
+      - Automatic category suggestion based on image analysis
+      - Improved YOLO model trained on civic-specific datasets
+
+  2.  Department Routing & Auto-Assignment
+      - Rule-based routing to appropriate municipal department
+      - Load-balanced worker assignment
+
+  3.  Field Worker Mobile Portal
+      - GPS-guided navigation to complaint locations
+      - Before/after photo comparison
+
+  4.  Admin Analytics Dashboard
+      - Interactive charts and graphs (Chart.js / D3.js)
+      - Trend analysis, heatmaps, and performance metrics
+
+  5.  SLA Engine & Escalation
+      - Configurable resolution time limits per category
+      - Automatic escalation for overdue complaints
+
+  6.  SMS/WhatsApp Notifications
+      - Twilio/WhatsApp Business API integration
+      - Status update alerts on citizen's phone
+
+  7.  Public Civic Map
+      - Real-time map showing all reported issues
+      - Heatmap visualization of problem areas
+
+  8.  Predictive Analytics
+      - Machine learning models for predicting issue hotspots
+      - Resource allocation optimization
+
+  9.  Multi-Language Support
+      - Localization for Hindi, regional languages
+
+  10. Mobile Native Applications
+      - React Native or Flutter apps for Android/iOS
+
+
+================================================================================
+22. TROUBLESHOOTING
+================================================================================
+
+  +-------------------------------+------------------------------------------+
+  | Issue                         | Solution                                 |
+  +-------------------------------+------------------------------------------+
+  | MongoDB connection error      | Ensure MongoDB is running locally or     |
+  |                               | Atlas URI is correct in .env             |
+  | Backend won't start           | Check .env file exists with valid        |
+  |                               | MONGODB_URI and JWT_SECRET               |
+  | Frontend API errors           | Ensure backend is running on port 5000   |
+  | Login fails                   | Confirm account exists and API is running|
+  | Map not loading               | Check internet (uses OpenStreetMap tiles) |
+  | Image upload fails            | Ensure backend/uploads/ directory exists |
+  | CORS errors                   | Check allowed origins in backend config  |
+  | YOLO model not loading        | Ensure yolov8n.pt exists in backend/     |
+  +-------------------------------+------------------------------------------+
+
+
+================================================================================
+23. CONCLUSION
+================================================================================
+
+The Civic Issue Reporting System is a comprehensive, production-ready
+civic-technology platform that demonstrates the integration of modern
+web technologies with artificial intelligence for solving real-world
+urban governance challenges.
+
+Key highlights:
+  - Full-stack architecture with React frontend and FastAPI backend
+  - AI-powered image verification using YOLOv8 object detection
+  - Real-time complaint tracking with visual status timelines
+  - Multi-role system with dedicated dashboards
+  - GPS-based geolocation with interactive maps
+  - Secure JWT authentication and role-based access control
+  - Responsive, mobile-first design
+
+The platform serves as both a functional MVP and a strong foundation
+for scaling into a production-grade smart city application.
+
+
+================================================================================
+                              END OF DOCUMENT
+================================================================================

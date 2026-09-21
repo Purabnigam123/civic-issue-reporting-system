@@ -1,21 +1,39 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from './components/ProtectedRoute';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import ReportIssuePage from './pages/ReportIssuePage';
-import ComplaintsPage from './pages/ComplaintsPage';
-import ComplaintDetailPage from './pages/ComplaintDetailPage';
-import ProfilePage from './pages/ProfilePage';
-import { useAuth } from './context/AuthContext';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import RoleProtectedRoute from "./components/RoleProtectedRoute";
+import { useAuth } from "./context/AuthContext";
+
+// Citizen Pages
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import ReportIssuePage from "./pages/ReportIssuePage";
+import ComplaintsPage from "./pages/ComplaintsPage";
+import ComplaintDetailPage from "./pages/ComplaintDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+
+// Super Admin Pages
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminComplaintsPage from "./pages/admin/AdminComplaintsPage";
+import AdminSuspiciousPage from "./pages/admin/AdminSuspiciousPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
+
+// Zonal Admin Pages
+import ZonalDashboardPage from "./pages/zonal/ZonalDashboardPage";
+import ZonalComplaintsPage from "./pages/zonal/ZonalComplaintsPage";
+import ZonalWorkersPage from "./pages/zonal/ZonalWorkersPage";
+
+// Field Worker Pages
+import WorkerDashboardPage from "./pages/worker/WorkerDashboardPage";
 
 function PublicAuthRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, getDashboardPath } = useAuth();
   if (loading) return null;
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={getDashboardPath()} replace />;
   }
   return children;
 }
@@ -42,7 +60,7 @@ function App() {
         }
       />
 
-      {/* Authenticated Routes */}
+      {/* Citizen Routes */}
       <Route
         path="/dashboard"
         element={
@@ -51,14 +69,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/report"
-        element={
-          <ProtectedRoute>
-            <ReportIssuePage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/report" element={<ReportIssuePage />} />
       <Route
         path="/complaints"
         element={
@@ -81,6 +92,84 @@ function App() {
           <ProtectedRoute>
             <ProfilePage />
           </ProtectedRoute>
+        }
+      />
+
+      {/* Super Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminDashboardPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/complaints"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminComplaintsPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/suspicious"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminSuspiciousPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminUsersPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/audit-logs"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminAuditLogsPage />
+          </RoleProtectedRoute>
+        }
+      />
+
+      {/* Zonal Admin Routes */}
+      <Route
+        path="/zonal"
+        element={
+          <RoleProtectedRoute allowedRoles={["ZONAL_ADMIN"]}>
+            <ZonalDashboardPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/zonal/complaints"
+        element={
+          <RoleProtectedRoute allowedRoles={["ZONAL_ADMIN"]}>
+            <ZonalComplaintsPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/zonal/workers"
+        element={
+          <RoleProtectedRoute allowedRoles={["ZONAL_ADMIN"]}>
+            <ZonalWorkersPage />
+          </RoleProtectedRoute>
+        }
+      />
+
+      {/* Field Worker Routes */}
+      <Route
+        path="/worker"
+        element={
+          <RoleProtectedRoute allowedRoles={["WORKER"]}>
+            <WorkerDashboardPage />
+          </RoleProtectedRoute>
         }
       />
 

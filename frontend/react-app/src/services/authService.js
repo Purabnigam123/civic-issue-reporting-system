@@ -2,33 +2,58 @@ import api from './api';
 
 export const authService = {
   async register(name, email, phone, password) {
-    const response = await api.post('/auth/register', { name, email, phone, password });
-    if (response.data && response.data.token) {
-      localStorage.setItem('civic_token', response.data.token);
-      localStorage.setItem('civic_user', JSON.stringify(response.data.user));
+    try {
+      const response = await api.post('/auth/register', { name, email, phone, password });
+      const { token, user } = response.data;
+      
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
+      
+      // Store token and user
+      localStorage.setItem('civic_token', token);
+      localStorage.setItem('civic_user', JSON.stringify(user));
+      
+      return { success: true, token, user, message: response.data.message };
+    } catch (error) {
+      const message = error.response?.data?.detail || error.response?.data?.message || error.message;
+      throw new Error(message);
     }
-    return response.data;
   },
 
   async login(email, password) {
-    const response = await api.post('/auth/login', { email, password });
-    if (response.data && response.data.token) {
-      localStorage.setItem('civic_token', response.data.token);
-      localStorage.setItem('civic_user', JSON.stringify(response.data.user));
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const { token, user } = response.data;
+      
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
+      
+      // Store token and user
+      localStorage.setItem('civic_token', token);
+      localStorage.setItem('civic_user', JSON.stringify(user));
+      
+      return { success: true, token, user, message: response.data.message };
+    } catch (error) {
+      const message = error.response?.data?.detail || error.response?.data?.message || error.message;
+      throw new Error(message);
     }
-    return response.data;
-  },
-
-  async loginAsDemo() {
-    return this.login('citizen@civic.local', 'Staff@123');
   },
 
   async getMe() {
-    const response = await api.get('/auth/me');
-    if (response.data && response.data.user) {
-      localStorage.setItem('civic_user', JSON.stringify(response.data.user));
+    try {
+      const response = await api.get('/auth/me');
+      const { user } = response.data;
+      
+      if (user) {
+        localStorage.setItem('civic_user', JSON.stringify(user));
+      }
+      
+      return { success: true, user };
+    } catch (error) {
+      throw error;
     }
-    return response.data;
   },
 
   logout() {

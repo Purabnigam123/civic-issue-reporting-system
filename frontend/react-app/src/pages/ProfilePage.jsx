@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DashboardNavbar from '../components/layout/DashboardNavbar';
 import MobileBottomNav from '../components/layout/MobileBottomNav';
 import { useAuth } from '../context/AuthContext';
 import { complaintService } from '../services/complaintService';
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [complaints, setComplaints] = useState([]);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [smsAlerts, setSmsAlerts] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const fileInputRef = useRef(null);
 
   // Editable fields
   const [name, setName] = useState(user?.name || 'Demo Citizen');
   const [email, setEmail] = useState(user?.email || 'citizen@civic.local');
   const [phone, setPhone] = useState(user?.phone || '+91 9876543210');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
 
   useEffect(() => {
     if (user) {
       setName(user.name || 'Demo Citizen');
       setEmail(user.email || 'citizen@civic.local');
       setPhone(user.phone || '+91 9876543210');
+      setAvatar(user.avatar || '');
     }
   }, [user]);
 
@@ -45,10 +48,42 @@ const ProfilePage = () => {
     setTimeout(() => setToastMessage(''), 3500);
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Please select an image smaller than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const newAvatar = reader.result;
+      setAvatar(newAvatar);
+      if (updateUser) {
+        updateUser({ avatar: newAvatar });
+      }
+      showToast('Display picture updated successfully!');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setAvatar('');
+    if (updateUser) {
+      updateUser({ avatar: '' });
+    }
+    showToast('Display picture removed.');
+  };
+
   const handleSaveProfile = (e) => {
     e.preventDefault();
+    if (updateUser) {
+      updateUser({ name, email, phone, avatar });
+    }
     setIsEditing(false);
-    showToast('Profile information updated locally!');
+    showToast('Profile information updated successfully!');
   };
 
   const formatMemberSince = (dateStr) => {
@@ -84,13 +119,37 @@ const ProfilePage = () => {
           <div className="lg:col-span-4 space-y-6">
             {/* Profile Summary Card */}
             <div className="bg-surface-container-lowest rounded-xl elevation-1 p-6 flex flex-col items-center text-center">
-              <div className="relative mb-4 group cursor-pointer">
-                <div className="w-32 h-32 rounded-full elevation-1 border-4 border-surface-container-lowest bg-primary-fixed flex items-center justify-center text-primary text-4xl font-extrabold shadow-sm">
-                  {name ? name.charAt(0).toUpperCase() : 'C'}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept="image/*"
+                className="hidden"
+              />
+
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative mb-4 group cursor-pointer"
+                title="Click to change display picture"
+              >
+                <div className="w-32 h-32 rounded-full elevation-1 border-4 border-surface-container-lowest bg-primary-fixed flex items-center justify-center text-primary text-4xl font-extrabold shadow-sm overflow-hidden">
+                  {avatar ? (
+                    <img src={avatar} alt={name || 'User Avatar'} className="w-full h-full object-cover" />
+                  ) : (
+                    name ? name.charAt(0).toUpperCase() : 'C'
+                  )}
                 </div>
-                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined text-white">photo_camera</span>
+                <div className="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                  <span className="text-white text-[11px] font-semibold mt-0.5">Change Photo</span>
                 </div>
+                <button
+                  type="button"
+                  aria-label="Upload photo"
+                  className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-primary text-on-primary shadow-md flex items-center justify-center border-2 border-white hover:bg-primary-container transition-transform group-hover:scale-110"
+                >
+                  <span className="material-symbols-outlined text-sm">edit</span>
+                </button>
               </div>
 
               <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">{name}</h3>
@@ -98,7 +157,31 @@ const ProfilePage = () => {
                 <span className="material-symbols-outlined text-sm">verified</span>
                 Verified Resident
               </p>
-              <p className="font-label-sm text-label-sm text-outline mt-2">{formatMemberSince(user?.createdAt)}</p>
+
+              {/* Display Picture Control Actions */}
+              <div className="flex items-center gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-1.5 bg-primary-fixed text-on-primary-fixed-variant text-xs font-semibold rounded-lg hover:bg-primary-fixed-dim transition-colors flex items-center gap-1.5 shadow-sm"
+                >
+                  <span className="material-symbols-outlined text-sm">photo_camera</span>
+                  Change Photo
+                </button>
+                {avatar && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="px-3 py-1.5 border border-outline-variant text-error text-xs font-semibold rounded-lg hover:bg-error-container/20 transition-colors flex items-center gap-1 text-xs"
+                    title="Remove custom photo"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete</span>
+                    Remove
+                  </button>
+                )}
+              </div>
+
+              <p className="font-label-sm text-label-sm text-outline mt-3">{formatMemberSince(user?.createdAt)}</p>
             </div>
 
             {/* Quick Stats / Badges */}

@@ -107,6 +107,15 @@ export default {
         "level-2": "0px 10px 30px rgba(15, 23, 42, 0.08)",
         "soft": "0 10px 40px -10px rgba(0,0,0,0.05)",
       },
+      keyframes: {
+        marquee: {
+          '0%':   { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 28s linear infinite',
+      },
     },
   },
   plugins: [],

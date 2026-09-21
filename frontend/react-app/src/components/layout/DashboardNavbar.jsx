@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import logoImg from '../../assets/images/logo.png';
+import NotificationBell from '../notifications/NotificationBell';
 
 const DashboardNavbar = () => {
   const location = useLocation();
@@ -94,15 +95,7 @@ const DashboardNavbar = () => {
 
       {/* Action Icons */}
       <div className="flex items-center gap-3">
-        <button
-          aria-label="Notifications"
-          className="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 rounded-full hover:bg-surface-container-high"
-          onClick={() => alert('No new notifications')}
-        >
-          <span className="material-symbols-outlined" data-icon="notifications">
-            notifications
-          </span>
-        </button>
+        <NotificationBell />
 
         {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
@@ -111,8 +104,12 @@ const DashboardNavbar = () => {
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             className="flex items-center gap-2 p-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200 rounded-full hover:bg-surface-container-high"
           >
-            <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm">
-              {user?.name ? user.name.charAt(0).toUpperCase() : 'C'}
+            <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm overflow-hidden border border-outline-variant/30">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user?.name || 'User Avatar'} className="w-full h-full object-cover" />
+              ) : (
+                user?.name ? user.name.charAt(0).toUpperCase() : 'C'
+              )}
             </div>
             <span className="hidden lg:inline text-xs font-semibold text-on-surface">
               {user?.name || 'Citizen'}
@@ -121,9 +118,18 @@ const DashboardNavbar = () => {
 
           {profileDropdownOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-surface-container-lowest rounded-xl shadow-level-2 border border-outline-variant/30 py-2 z-50">
-              <div className="px-4 py-2 border-b border-outline-variant/20">
-                <p className="font-label-md text-on-surface font-bold truncate">{user?.name || 'Demo Citizen'}</p>
-                <p className="font-label-sm text-on-surface-variant truncate">{user?.email || 'citizen@civic.local'}</p>
+              <div className="px-4 py-2 border-b border-outline-variant/20 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm overflow-hidden shrink-0 border border-outline-variant/30">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user?.name || 'User Avatar'} className="w-full h-full object-cover" />
+                  ) : (
+                    user?.name ? user.name.charAt(0).toUpperCase() : 'C'
+                  )}
+                </div>
+                <div className="truncate min-w-0">
+                  <p className="font-label-md text-on-surface font-bold truncate">{user?.name || 'Demo Citizen'}</p>
+                  <p className="font-label-sm text-on-surface-variant text-xs truncate">{user?.email || 'citizen@civic.local'}</p>
+                </div>
               </div>
               <Link
                 to="/profile"

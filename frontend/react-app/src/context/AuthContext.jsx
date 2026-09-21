@@ -40,15 +40,6 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const loginAsDemo = async () => {
-    const data = await authService.loginAsDemo();
-    if (data && data.token) {
-      setToken(data.token);
-      setUser(data.user);
-    }
-    return data;
-  };
-
   const register = async (name, email, phone, password) => {
     const data = await authService.register(name, email, phone, password);
     if (data && data.token) {
@@ -64,6 +55,32 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  const updateUser = (updatedFields) => {
+    setUser((prevUser) => {
+      const newUser = { ...(prevUser || {}), ...updatedFields };
+      localStorage.setItem('civic_user', JSON.stringify(newUser));
+      return newUser;
+    });
+  };
+
+  // ── Role helpers ─────────────────────────────────────────────
+  const role = user?.role || 'CITIZEN';
+  const isSuperAdmin = role === 'SUPER_ADMIN';
+  const isZonalAdmin = role === 'ZONAL_ADMIN';
+  const isWorker = role === 'WORKER';
+  const isCitizen = role === 'CITIZEN';
+
+  /** Returns the dashboard path for a role or current user's role */
+  const getDashboardPath = (targetRole) => {
+    const r = targetRole || role;
+    switch (r) {
+      case 'SUPER_ADMIN': return '/admin';
+      case 'ZONAL_ADMIN': return '/zonal';
+      case 'WORKER': return '/worker';
+      default: return '/dashboard';
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -72,9 +89,16 @@ export const AuthProvider = ({ children }) => {
         loading,
         isAuthenticated: !!token,
         login,
-        loginAsDemo,
         register,
         logout,
+        updateUser,
+        // Role helpers
+        role,
+        isSuperAdmin,
+        isZonalAdmin,
+        isWorker,
+        isCitizen,
+        getDashboardPath,
       }}
     >
       {children}
