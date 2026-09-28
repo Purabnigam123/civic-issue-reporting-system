@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Optional
 from bson import ObjectId
 
 from ..database.mongodb import get_database
+from ..routers.websocket import manager
 
 
 async def create_notification(
@@ -16,6 +17,7 @@ async def create_notification(
     type: str = "STATUS_UPDATE",
     complaint_id: Optional[str] = None,
     data: Optional[Dict[str, Any]] = None,
+    broadcast_role: Optional[str] = None,
 ) -> Dict[str, Any]:
     db = get_database()
     now = datetime.now(timezone.utc)
@@ -36,6 +38,18 @@ async def create_notification(
     doc["id"] = doc["_id"]
     doc["userId"] = str(doc["userId"])
     doc["createdAt"] = now.isoformat()
+    
+    # Live broadcast
+    payload = {
+        "type": "NOTIFICATION",
+        "event": "NEW_NOTIFICATION",
+        "notification": doc
+    }
+    if broadcast_role:
+        await manager.broadcast_to_role(payload, broadcast_role)
+    else:
+        await manager.send_personal_message(payload, user_id)
+        
     return doc
 
 

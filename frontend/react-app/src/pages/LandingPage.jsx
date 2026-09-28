@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import LandingNavbar from "../components/layout/LandingNavbar";
 import Footer from "../components/layout/Footer";
 import CivicAnalyticsSection from "../components/CivicAnalyticsSection";
+import NearbyIssuesSection from "../components/NearbyIssuesSection";
 import heroImg from "../assets/images/hero image.png";
 import bannerImg from "../assets/images/banner.jpeg";
 
@@ -162,7 +163,7 @@ const LandingPage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-16 md:-mt-20 relative z-20 w-full mb-8">
+      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-16 md:-mt-20 relative z-20 w-full mb-4">
         <div className="bg-surface rounded-2xl shadow-level-2 p-8 border border-surface-container-highest">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-outline-variant/30">
             <div className="flex items-center gap-4 px-4">
@@ -313,6 +314,9 @@ const LandingPage = () => {
           }
         `}</style>
       </div>
+
+      {/* ── Issues Near You ── */}
+      <NearbyIssuesSection />
 
       {/* Real-Time Civic Analytics & Graphs Section */}
       <CivicAnalyticsSection />

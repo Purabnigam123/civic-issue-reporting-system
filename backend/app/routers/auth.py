@@ -2,6 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from datetime import datetime, timedelta, timezone
 
 from ..schemas.auth import UserCreate, UserLogin
+from pydantic import BaseModel
+
+class PasswordChange(BaseModel):
+    old_password: str
+    new_password: str
 from ..models.user import hash_password, verify_password, UserRole, format_user_response
 from ..dependencies.auth import get_current_user
 from ..config.env import env
@@ -93,11 +98,16 @@ async def login(user_login: UserLogin):
     user["_id"] = str(user["_id"])
     token = create_access_token({"id": user["_id"]})
     user_data = format_user_response(user)
+    
+    requires_password_change = bool(user.get("temporary_password_required", False))
+    if requires_password_change:
+        user_data["requires_password_change"] = True
 
     return {
         "success": True,
         "message": "Login successful",
         "token": token,
+        "requires_password_change": requires_password_change,
         "user": user_data,
         "data": {
             "user": user_data,
@@ -108,10 +118,39 @@ async def login(user_login: UserLogin):
 @router.get("/me")
 async def get_me(current_user: dict = Depends(get_current_user)):
     user_data = format_user_response(current_user)
+    if current_user.get("temporary_password_required"):
+        user_data["requires_password_change"] = True
+        
     return {
         "success": True,
         "user": user_data,
         "data": {
             "user": user_data
         }
+    }
+
+@router.post("/change-password")
+async def change_password(payload: PasswordChange, current_user: dict = Depends(get_current_user)):
+    db = get_db()
+    
+    if not verify_password(payload.old_password, current_user["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Incorrect current password."
+        )
+    
+    await db.users.update_one(
+        {"_id": current_user["_id"]},
+        {
+            "$set": {
+                "password": hash_password(payload.new_password), 
+                "updatedAt": datetime.now(timezone.utc)
+            },
+            "$unset": {"temporary_password_required": ""}
+        }
+    )
+    
+    return {
+        "success": True, 
+        "message": "Password changed successfully."
     }

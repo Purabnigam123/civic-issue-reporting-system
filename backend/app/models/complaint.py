@@ -9,11 +9,13 @@ class ComplaintStatus(str, Enum):
     UNDER_REVIEW = "UNDER_REVIEW"
     ASSIGNED = "ASSIGNED"
     IN_PROGRESS = "IN_PROGRESS"
+    RESOLUTION_SUBMITTED = "RESOLUTION_SUBMITTED"
     RESOLVED = "RESOLVED"
     VERIFIED = "VERIFIED"
     REJECTED = "REJECTED"
     ESCALATED = "ESCALATED"
     REOPENED = "REOPENED"
+    CLOSED = "CLOSED"
 
 
 class ComplaintCategory(str, Enum):
@@ -69,7 +71,14 @@ VALID_TRANSITIONS: Dict[ComplaintStatus, List[ComplaintStatus]] = {
         ComplaintStatus.REJECTED,
     ],
     ComplaintStatus.IN_PROGRESS: [
+        ComplaintStatus.RESOLUTION_SUBMITTED,
         ComplaintStatus.RESOLVED,
+        ComplaintStatus.ESCALATED,
+    ],
+    ComplaintStatus.RESOLUTION_SUBMITTED: [
+        ComplaintStatus.RESOLVED,
+        ComplaintStatus.IN_PROGRESS,
+        ComplaintStatus.REJECTED,
         ComplaintStatus.ESCALATED,
     ],
     ComplaintStatus.RESOLVED: [
@@ -82,10 +91,14 @@ VALID_TRANSITIONS: Dict[ComplaintStatus, List[ComplaintStatus]] = {
     ],
     ComplaintStatus.ESCALATED: [
         ComplaintStatus.ASSIGNED,
+        ComplaintStatus.IN_PROGRESS,
         ComplaintStatus.REJECTED,
         ComplaintStatus.RESOLVED,
     ],
-    ComplaintStatus.VERIFIED: [],  # Terminal state
+    ComplaintStatus.VERIFIED: [
+        ComplaintStatus.CLOSED,  # Post-verification administrative closure
+    ],
+    ComplaintStatus.CLOSED: [],  # Terminal state
     ComplaintStatus.REJECTED: [
         ComplaintStatus.SUBMITTED,  # Super Admin can reopen / unreject
     ],
@@ -120,6 +133,12 @@ def format_complaint_dict(doc: Dict[str, Any]) -> Dict[str, Any]:
     if "slaDeadline" in formatted and isinstance(formatted["slaDeadline"], datetime):
         formatted["slaDeadline"] = formatted["slaDeadline"].isoformat()
 
+    if "targetResolutionDate" in formatted and isinstance(formatted["targetResolutionDate"], datetime):
+        formatted["targetResolutionDate"] = formatted["targetResolutionDate"].isoformat()
+
+    if "resolutionSubmittedAt" in formatted and isinstance(formatted["resolutionSubmittedAt"], datetime):
+        formatted["resolutionSubmittedAt"] = formatted["resolutionSubmittedAt"].isoformat()
+
     if "assignedAt" in formatted and isinstance(formatted["assignedAt"], datetime):
         formatted["assignedAt"] = formatted["assignedAt"].isoformat()
 
@@ -134,6 +153,21 @@ def format_complaint_dict(doc: Dict[str, Any]) -> Dict[str, Any]:
 
     if "escalatedAt" in formatted and isinstance(formatted["escalatedAt"], datetime):
         formatted["escalatedAt"] = formatted["escalatedAt"].isoformat()
+
+    if "closedAt" in formatted and isinstance(formatted["closedAt"], datetime):
+        formatted["closedAt"] = formatted["closedAt"].isoformat()
+
+    if "eta_updated_at" in formatted and isinstance(formatted["eta_updated_at"], datetime):
+        formatted["eta_updated_at"] = formatted["eta_updated_at"].isoformat()
+
+    if "estimated_resolution_at" in formatted and isinstance(formatted["estimated_resolution_at"], datetime):
+        formatted["estimated_resolution_at"] = formatted["estimated_resolution_at"].isoformat()
+
+    if "priority_calculated_at" in formatted and isinstance(formatted["priority_calculated_at"], datetime):
+        formatted["priority_calculated_at"] = formatted["priority_calculated_at"].isoformat()
+
+    if "rated_at" in formatted and isinstance(formatted["rated_at"], datetime):
+        formatted["rated_at"] = formatted["rated_at"].isoformat()
 
     # Format dates in status_history
     if "status_history" in formatted and isinstance(formatted["status_history"], list):

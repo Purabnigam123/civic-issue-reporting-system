@@ -13,6 +13,13 @@ from .routers import ai, auth, complaints, admin, zonal, worker, notifications, 
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
+    # Create indexes and backfill GeoJSON locations
+    try:
+        from .config.db_indexes import create_indexes, migrate_geojson_locations
+        await create_indexes()
+        await migrate_geojson_locations()
+    except Exception as e:
+        print(f"[Startup] Index/migration warning: {e}")
     yield
     # Shutdown
     await close_mongo_connection()

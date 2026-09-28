@@ -30,4 +30,14 @@ export const workerService = {
     const res = await api.get('/worker/profile');
     return res.data;
   },
+
+  async updateAvailability(availability) {
+    const res = await api.post('/worker/availability', { availability });
+    return res.data;
+  },
+
+  async getAnalytics() {
+    const res = await api.get('/worker/analytics');
+    return res.data;
+  },
 };

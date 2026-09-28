@@ -9,6 +9,7 @@ const AdminSidebar = () => {
 
   const navItems = [
     { to: '/admin', label: 'City Overview', icon: 'dashboard', end: true },
+    { to: '/admin/escalations', label: 'Escalated Issues', icon: 'crisis_alert' },
     { to: '/admin/complaints', label: 'All Complaints', icon: 'list_alt' },
     { to: '/admin/suspicious', label: 'Suspicious Queue', icon: 'security_update_warning' },
     { to: '/admin/users', label: 'Citizen & Personnel', icon: 'group' },

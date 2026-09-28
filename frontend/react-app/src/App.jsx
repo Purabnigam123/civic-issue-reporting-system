@@ -13,9 +13,11 @@ import ReportIssuePage from "./pages/ReportIssuePage";
 import ComplaintsPage from "./pages/ComplaintsPage";
 import ComplaintDetailPage from "./pages/ComplaintDetailPage";
 import ProfilePage from "./pages/ProfilePage";
+import CivicMapPage from "./pages/CivicMapPage";
 
 // Super Admin Pages
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminEscalatedPage from "./pages/admin/AdminEscalatedPage";
 import AdminComplaintsPage from "./pages/admin/AdminComplaintsPage";
 import AdminSuspiciousPage from "./pages/admin/AdminSuspiciousPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
@@ -24,6 +26,7 @@ import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
 // Zonal Admin Pages
 import ZonalDashboardPage from "./pages/zonal/ZonalDashboardPage";
 import ZonalComplaintsPage from "./pages/zonal/ZonalComplaintsPage";
+import ZonalVerificationsPage from "./pages/zonal/ZonalVerificationsPage";
 import ZonalWorkersPage from "./pages/zonal/ZonalWorkersPage";
 
 // Field Worker Pages
@@ -59,6 +62,7 @@ function App() {
           </PublicAuthRoute>
         }
       />
+      <Route path="/map" element={<CivicMapPage />} />
 
       {/* Citizen Routes */}
       <Route
@@ -101,6 +105,14 @@ function App() {
         element={
           <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
             <AdminDashboardPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/escalations"
+        element={
+          <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <AdminEscalatedPage />
           </RoleProtectedRoute>
         }
       />
@@ -151,6 +163,14 @@ function App() {
         element={
           <RoleProtectedRoute allowedRoles={["ZONAL_ADMIN"]}>
             <ZonalComplaintsPage />
+          </RoleProtectedRoute>
+        }
+      />
+      <Route
+        path="/zonal/verifications"
+        element={
+          <RoleProtectedRoute allowedRoles={["ZONAL_ADMIN"]}>
+            <ZonalVerificationsPage />
           </RoleProtectedRoute>
         }
       />

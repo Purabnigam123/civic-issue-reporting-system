@@ -24,6 +24,7 @@ async def check_and_escalate_overdue_complaints() -> Dict[str, Any]:
         ComplaintStatus.UNDER_REVIEW.value,
         ComplaintStatus.ASSIGNED.value,
         ComplaintStatus.IN_PROGRESS.value,
+        ComplaintStatus.RESOLUTION_SUBMITTED.value,
         ComplaintStatus.REOPENED.value,
     ]
 

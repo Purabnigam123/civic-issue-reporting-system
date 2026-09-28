@@ -39,8 +39,16 @@ def format_user_response(user: dict) -> dict:
         "role": user.get("role", UserRole.CITIZEN.value),
         "district_id": user.get("district_id"),
         "district": user.get("district"),
+        "district_name": user.get("district_name"),
         "worker_id": user.get("worker_id"),
         "department": user.get("department"),
         "status": user.get("status", "active"),
         "suspicious_count": user.get("suspicious_count", 0),
+        # Worker-specific fields
+        "availability_status": user.get("availability_status", "AVAILABLE"),
+        "skills": user.get("skills", []),
+        "max_active_complaints": user.get("max_active_complaints", 5),
+        "temporary_password_required": user.get("temporary_password_required", False),
+        "zone_id": user.get("zone_id"),
+        "zone_name": user.get("zone_name"),
     }

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ZonalSidebar from '../../components/zonal/ZonalSidebar';
 import { zonalService } from '../../services/zonalService';
 import { Link } from 'react-router-dom';
+import { WorkerLeaderboard } from '../../components/analytics/WorkerLeaderboard';
+import { ResolutionTrendChart } from '../../components/analytics/ResolutionTrendChart';
 
 const ZonalDashboardPage = () => {
   const [metrics, setMetrics] = useState(null);
@@ -130,61 +132,10 @@ const ZonalDashboardPage = () => {
 
             {/* 7-Day Operational Activity Trend */}
             {analytics?.trend && analytics.trend.length > 0 && (
-              <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 civic-glow">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
-                  <div>
-                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-on-surface flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary text-lg">trending_up</span>
-                      7-Day Operational Activity Trend
-                    </h3>
-                    <p className="text-xs text-on-surface-variant mt-0.5">Complaints filed vs issues resolved in this district</p>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs font-bold">
-                    <span className="flex items-center gap-1.5 text-primary">
-                      <span className="w-3 h-3 rounded-sm bg-primary"></span> Filed
-                    </span>
-                    <span className="flex items-center gap-1.5 text-secondary">
-                      <span className="w-3 h-3 rounded-sm bg-secondary"></span> Resolved
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-7 gap-2 sm:gap-4 items-end h-48 pt-6 pb-2 border-b border-outline-variant/20">
-                  {analytics.trend.map((day, idx) => {
-                    const filedPct = Math.round((day.complaints / maxTrend) * 100);
-                    const resPct = Math.round((day.resolved / maxTrend) * 100);
-                    return (
-                      <div key={idx} className="flex flex-col items-center gap-2 h-full justify-end group">
-                        <div className="flex items-end gap-1 sm:gap-1.5 w-full justify-center h-full">
-                          {/* Filed Bar */}
-                          <div
-                            className="w-3 sm:w-5 bg-primary rounded-t-md transition-all group-hover:opacity-80 relative"
-                            style={{ height: `${Math.max(filedPct, 4)}%` }}
-                            title={`${day.complaints} complaints filed`}
-                          >
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-container-high px-1 py-0.5 rounded text-[9px] font-bold text-primary">
-                              {day.complaints}
-                            </span>
-                          </div>
-                          {/* Resolved Bar */}
-                          <div
-                            className="w-3 sm:w-5 bg-secondary rounded-t-md transition-all group-hover:opacity-80 relative"
-                            style={{ height: `${Math.max(resPct, 4)}%` }}
-                            title={`${day.resolved} complaints resolved`}
-                          >
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-container-high px-1 py-0.5 rounded text-[9px] font-bold text-secondary">
-                              {day.resolved}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-bold text-on-surface-variant truncate w-full text-center">
-                          {day.date}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <ResolutionTrendChart 
+                data={analytics.trend.map(t => ({ date: t.date, reported: t.complaints, resolved: t.resolved }))} 
+                title="7-Day Operational Activity Trend"
+              />
             )}
 
             {/* Category breakdown in zone */}
@@ -217,59 +168,15 @@ const ZonalDashboardPage = () => {
 
             {/* Worker Performance Leaderboard */}
             {analytics?.workers && analytics.workers.length > 0 && (
-              <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 civic-glow">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-on-surface flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-lg">engineering</span>
-                    Field Worker Resolution Performance
-                  </h3>
-                  <Link to="/zonal/workers" className="text-xs text-primary font-bold hover:underline">
-                    View All Workers →
-                  </Link>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-outline-variant/20 text-on-surface-variant font-extrabold uppercase tracking-wider">
-                        <th className="pb-3 pl-2">Worker</th>
-                        <th className="pb-3">Worker ID</th>
-                        <th className="pb-3 text-center">Active</th>
-                        <th className="pb-3 text-center">Resolved</th>
-                        <th className="pb-3 text-center">Success Rate</th>
-                        <th className="pb-3 text-right pr-2">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-outline-variant/10">
-                      {analytics.workers.slice(0, 8).map((w) => (
-                        <tr key={w.id} className="hover:bg-surface-container-low/50 transition-colors">
-                          <td className="py-3.5 pl-2 font-bold text-on-surface flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-primary/10 text-primary font-black flex items-center justify-center text-[10px]">
-                              {w.name?.charAt(0) || 'W'}
-                            </div>
-                            {w.name}
-                          </td>
-                          <td className="py-3.5 font-mono text-outline">{w.worker_id}</td>
-                          <td className="py-3.5 text-center font-bold text-primary">{w.active}</td>
-                          <td className="py-3.5 text-center font-bold text-secondary">{w.completed}</td>
-                          <td className="py-3.5 text-center">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-primary-fixed/20 text-primary">
-                              {w.rate}%
-                            </span>
-                          </td>
-                          <td className="py-3.5 text-right pr-2">
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                              w.status === 'ACTIVE' ? 'bg-secondary/15 text-secondary' : 'bg-outline/20 text-outline'
-                            }`}>
-                              {w.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <WorkerLeaderboard 
+                data={analytics.workers.slice(0, 8).map(w => ({
+                  id: w.id,
+                  name: w.name,
+                  district: w.worker_id,
+                  resolvedCount: w.completed
+                }))} 
+                title="Top Zone Field Workers" 
+              />
             )}
           </div>
         ) : null}

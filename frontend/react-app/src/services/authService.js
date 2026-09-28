@@ -14,7 +14,13 @@ export const authService = {
       localStorage.setItem('civic_token', token);
       localStorage.setItem('civic_user', JSON.stringify(user));
       
-      return { success: true, token, user, message: response.data.message };
+      return { 
+        success: true, 
+        token, 
+        user, 
+        message: response.data.message,
+        requires_password_change: response.data.requires_password_change
+      };
     } catch (error) {
       const message = error.response?.data?.detail || error.response?.data?.message || error.message;
       throw new Error(message);
@@ -34,7 +40,13 @@ export const authService = {
       localStorage.setItem('civic_token', token);
       localStorage.setItem('civic_user', JSON.stringify(user));
       
-      return { success: true, token, user, message: response.data.message };
+      return { 
+        success: true, 
+        token, 
+        user, 
+        message: response.data.message,
+        requires_password_change: response.data.requires_password_change
+      };
     } catch (error) {
       const message = error.response?.data?.detail || error.response?.data?.message || error.message;
       throw new Error(message);
@@ -76,5 +88,23 @@ export const authService = {
 
   isAuthenticated() {
     return !!localStorage.getItem('civic_token');
+  },
+
+  async changePassword(old_password, new_password) {
+    try {
+      const response = await api.post('/auth/change-password', { old_password, new_password });
+      
+      // Update local user object to remove flag
+      const user = this.getCurrentUser();
+      if (user) {
+        user.requires_password_change = false;
+        localStorage.setItem('civic_user', JSON.stringify(user));
+      }
+      
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      const message = error.response?.data?.detail || error.response?.data?.message || error.message;
+      throw new Error(message);
+    }
   },
 };

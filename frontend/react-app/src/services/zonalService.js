@@ -53,4 +53,47 @@ export const zonalService = {
     const res = await api.get('/zonal/analytics');
     return res.data;
   },
+
+  async getAiAssignmentRecommendations(complaintId) {
+    const res = await api.get(`/zonal/ai-assignment/${complaintId}`);
+    return res.data;
+  },
+
+  async getWorkersAnalytics() {
+    const res = await api.get('/zonal/workers/analytics');
+    return res.data;
+  },
+
+  async getWorkerAnalytics(workerId) {
+    const res = await api.get(`/zonal/workers/${workerId}/analytics`);
+    return res.data;
+  },
+
+  async getVerifications(params = {}) {
+    const res = await api.get('/zonal/verifications', { params });
+    return res.data;
+  },
+
+  async verifyResolution(complaintId, { approved, comment }) {
+    const res = await api.post(`/zonal/complaints/${complaintId}/verify-resolution`, {
+      approved,
+      comment,
+    });
+    return res.data;
+  },
+
+  async updateTargetDate(complaintId, payload) {
+    const res = await api.patch(`/zonal/complaints/${complaintId}/target-date`, payload);
+    return res.data;
+  },
+
+  async autoAssignComplaint(complaintId) {
+    const res = await api.post(`/zonal/complaints/${complaintId}/auto-assign`);
+    return res.data;
+  },
+
+  async autoAssignAll() {
+    const res = await api.post('/zonal/complaints/auto-assign-all');
+    return res.data;
+  },
 };

@@ -25,6 +25,9 @@ const LandingNavbar = () => {
             <Link className="text-primary dark:text-inverse-primary border-b-2 border-primary pb-0.5 font-bold" to="/">
               Home
             </Link>
+            <a className="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2.5 py-1 text-sm font-medium" href="#nearby-issues">
+              Issues Near You
+            </a>
             <a className="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:bg-primary-container/10 dark:hover:bg-primary-container/20 rounded-lg px-2.5 py-1 text-sm font-medium" href="#how-it-works">
               How it Works
             </a>
@@ -99,6 +102,13 @@ const LandingNavbar = () => {
             >
               Home
             </Link>
+            <a
+              href="#nearby-issues"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-on-surface-variant hover:text-primary py-2"
+            >
+              Issues Near You
+            </a>
             <a
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}

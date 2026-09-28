@@ -76,9 +76,10 @@ async def transition_complaint_status(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You can only update complaints assigned to you",
             )
-        # Worker can only do: ASSIGNED -> IN_PROGRESS, or IN_PROGRESS -> RESOLVED
+        # Worker can do: ASSIGNED -> IN_PROGRESS, IN_PROGRESS -> RESOLUTION_SUBMITTED, or IN_PROGRESS -> RESOLVED
         if (old_status, new_status) not in [
             (ComplaintStatus.ASSIGNED, ComplaintStatus.IN_PROGRESS),
+            (ComplaintStatus.IN_PROGRESS, ComplaintStatus.RESOLUTION_SUBMITTED),
             (ComplaintStatus.IN_PROGRESS, ComplaintStatus.RESOLVED),
         ]:
             raise HTTPException(
@@ -149,13 +150,24 @@ async def transition_complaint_status(
     elif new_status == ComplaintStatus.IN_PROGRESS:
         update_doc["startedAt"] = now
 
+    elif new_status == ComplaintStatus.RESOLUTION_SUBMITTED:
+        update_doc["resolutionSubmittedAt"] = now
+        if evidence:
+            update_doc["resolutionEvidence"] = evidence
+
     elif new_status == ComplaintStatus.RESOLVED:
         update_doc["resolvedAt"] = now
         if evidence:
             update_doc["resolutionEvidence"] = evidence
+        if user_role in (UserRole.ZONAL_ADMIN, UserRole.SUPER_ADMIN):
+            update_doc["districtVerifiedAt"] = now
+            update_doc["districtVerifiedBy"] = user_name
 
     elif new_status == ComplaintStatus.VERIFIED:
         update_doc["verifiedAt"] = now
+
+    elif new_status == ComplaintStatus.CLOSED:
+        update_doc["closedAt"] = now
 
     elif new_status == ComplaintStatus.ESCALATED:
         update_doc["escalatedAt"] = now
@@ -219,5 +231,13 @@ async def transition_complaint_status(
     except Exception as e:
         # Non-blocking notification failure
         pass
+
+    # 5. Trigger ETA recalculation when complaint is assigned or reassigned
+    if new_status in (ComplaintStatus.ASSIGNED, ComplaintStatus.IN_PROGRESS):
+        try:
+            from .eta_service import update_complaint_eta
+            await update_complaint_eta(str(c_oid))
+        except Exception:
+            pass  # Non-blocking
 
     return formatted_result

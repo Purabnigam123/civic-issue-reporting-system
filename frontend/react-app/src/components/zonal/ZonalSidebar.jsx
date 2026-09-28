@@ -12,6 +12,7 @@ const ZonalSidebar = () => {
   const navItems = [
     { to: '/zonal', label: 'Zone Overview', icon: 'location_city', end: true },
     { to: '/zonal/complaints', label: 'District Complaints', icon: 'assignment' },
+    { to: '/zonal/verifications', label: 'Resolution Verifications', icon: 'verified' },
     { to: '/zonal/workers', label: 'Field Crew Team', icon: 'engineering' },
   ];
 

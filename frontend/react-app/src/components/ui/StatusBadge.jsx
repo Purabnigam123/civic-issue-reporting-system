@@ -41,6 +41,21 @@ const StatusBadge = ({ status }) => {
           Resolved
         </span>
       );
+    case 'RESOLUTION_SUBMITTED':
+    case 'PENDING_VERIFICATION':
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full font-label-sm text-label-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+          Pending Verification
+        </span>
+      );
+    case 'ESCALATED':
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-error-container text-on-error-container border border-error/40 rounded-full font-label-sm text-label-sm animate-pulse font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-error"></span>
+          Escalated
+        </span>
+      );
     case 'REOPENED':
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-error-container text-error rounded-full font-label-sm text-label-sm">

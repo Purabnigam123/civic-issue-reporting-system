@@ -8,6 +8,7 @@ const AdminSuspiciousPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [actioningId, setActioningId] = useState(null);
+  const [feedbackMsg, setFeedbackMsg] = useState(null);
 
   const fetchSuspicious = async () => {
     try {
@@ -31,7 +32,11 @@ const AdminSuspiciousPage = () => {
   const handleVerify = async (complaintId) => {
     try {
       setActioningId(complaintId);
-      await adminService.verifySuspicious(complaintId);
+      const res = await adminService.verifySuspicious(complaintId);
+      setFeedbackMsg(res?.message || 'Report approved and dispatched to district page!');
+      setTimeout(() => setFeedbackMsg(null), 6000);
+      // Immediately remove from current queue view
+      setItems((prev) => prev.filter((c) => (c.id || c.complaintId) !== complaintId && c._id !== complaintId));
       fetchSuspicious();
     } catch (err) {
       alert(err.response?.data?.detail || 'Failed to verify complaint');
@@ -46,7 +51,11 @@ const AdminSuspiciousPage = () => {
 
     try {
       setActioningId(complaintId);
-      await adminService.dismissSuspicious(complaintId, reason);
+      const res = await adminService.dismissSuspicious(complaintId, reason);
+      setFeedbackMsg(res?.message || 'Complaint dismissed and rejected.');
+      setTimeout(() => setFeedbackMsg(null), 6000);
+      // Immediately remove from current queue view
+      setItems((prev) => prev.filter((c) => (c.id || c.complaintId) !== complaintId && c._id !== complaintId));
       fetchSuspicious();
     } catch (err) {
       alert(err.response?.data?.detail || 'Failed to dismiss complaint');
@@ -77,6 +86,21 @@ const AdminSuspiciousPage = () => {
             Complaints flagged by automated anti-spam algorithms, bounding checks, or rapid-submission frequency
           </p>
         </div>
+
+        {feedbackMsg && (
+          <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 rounded-2xl flex items-center justify-between shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-emerald-600 text-2xl">check_circle</span>
+              <span className="text-sm font-semibold">{feedbackMsg}</span>
+            </div>
+            <button
+              onClick={() => setFeedbackMsg(null)}
+              className="text-emerald-600 hover:text-emerald-800 text-xs font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
@@ -136,9 +160,18 @@ const AdminSuspiciousPage = () => {
                       ))}
                     </div>
 
-                    <p className="text-[11px] text-on-surface-variant">
+                    <p className="text-[11px] text-on-surface-variant mb-2">
                       <strong className="text-on-surface">Location:</strong> {item.address}
                     </p>
+
+                    {/* Target District routing badge */}
+                    <div className="flex items-center gap-1.5 pt-2 border-t border-outline-variant/20 text-[11px] text-on-surface-variant font-medium">
+                      <span className="material-symbols-outlined text-sm text-primary">location_city</span>
+                      <span>Target District:</span>
+                      <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                        {item.district_name || (item.district_id ? item.district_id.replace('_', ' ').toUpperCase() : 'Central Delhi')}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -148,16 +181,18 @@ const AdminSuspiciousPage = () => {
                     type="button"
                     disabled={actioningId === (item.id || item.complaintId)}
                     onClick={() => handleVerify(item.id || item.complaintId)}
-                    className="flex-1 py-2 bg-secondary hover:bg-on-secondary-container text-on-secondary rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-colors disabled:opacity-50 shadow-sm"
+                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 shadow-sm"
+                    title="Approve report and dispatch to district portal"
                   >
-                    <span className="material-symbols-outlined text-base">check</span>
-                    Mark Genuine
+                    <span className="material-symbols-outlined text-base">verified</span>
+                    Approve for District
                   </button>
                   <button
                     type="button"
                     disabled={actioningId === (item.id || item.complaintId)}
                     onClick={() => handleDismiss(item.id || item.complaintId)}
-                    className="flex-1 py-2 bg-error hover:bg-error/90 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-colors disabled:opacity-50 shadow-sm"
+                    className="flex-1 py-2.5 bg-error hover:bg-error/90 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 shadow-sm"
+                    title="Reject report as spam"
                   >
                     <span className="material-symbols-outlined text-base">delete</span>
                     Dismiss Spam

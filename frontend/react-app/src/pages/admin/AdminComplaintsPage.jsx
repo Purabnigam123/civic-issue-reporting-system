@@ -121,6 +121,7 @@ const AdminComplaintsPage = () => {
               <option value="UNDER_REVIEW">UNDER REVIEW</option>
               <option value="ASSIGNED">ASSIGNED</option>
               <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="RESOLUTION_SUBMITTED">RESOLUTION SUBMITTED (Pending Review)</option>
               <option value="RESOLVED">RESOLVED</option>
               <option value="VERIFIED">VERIFIED</option>
               <option value="ESCALATED">ESCALATED</option>

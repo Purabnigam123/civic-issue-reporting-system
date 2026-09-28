@@ -18,6 +18,9 @@ async def log_audit_event(
     target_id: Optional[str] = None,
     details: Optional[Dict[str, Any]] = None,
     ip_address: Optional[str] = None,
+    old_value: Optional[Any] = None,
+    new_value: Optional[Any] = None,
+    reason: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Record an audit log entry in MongoDB `audit_logs` collection."""
     db = get_database()
@@ -31,6 +34,9 @@ async def log_audit_event(
         "target_type": target_type,
         "target_id": target_id,
         "details": details or {},
+        "old_value": old_value,
+        "new_value": new_value,
+        "reason": reason,
         "ip_address": ip_address,
         "created_at": now,
     }
@@ -49,14 +55,29 @@ async def get_audit_logs(
     skip: int = 0,
     action: Optional[str] = None,
     target_type: Optional[str] = None,
+    actor_id: Optional[str] = None,
+    target_id: Optional[str] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
 ) -> List[Dict[str, Any]]:
-    """Retrieve recent audit logs with pagination."""
+    """Retrieve recent audit logs with pagination and rich filtering."""
     db = get_database()
-    query = {}
+    query: Dict[str, Any] = {}
     if action:
         query["action"] = action
     if target_type:
         query["target_type"] = target_type
+    if actor_id:
+        query["actor_id"] = ObjectId(actor_id) if ObjectId.is_valid(actor_id) else actor_id
+    if target_id:
+        query["target_id"] = target_id
+    if date_from or date_to:
+        date_filter: Dict[str, Any] = {}
+        if date_from:
+            date_filter["$gte"] = date_from
+        if date_to:
+            date_filter["$lte"] = date_to
+        query["created_at"] = date_filter
 
     cursor = db.audit_logs.find(query).sort("created_at", -1).skip(skip).limit(limit)
     raw_logs = await cursor.to_list(None)

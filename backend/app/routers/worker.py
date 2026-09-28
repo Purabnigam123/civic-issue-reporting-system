@@ -14,6 +14,7 @@ from ..dependencies.auth import require_worker
 from ..middleware.upload import save_upload_file
 from ..services.status_service import transition_complaint_status
 from ..services.audit_service import log_audit_event
+from ..services.worker_analytics_service import get_worker_analytics
 
 router = APIRouter(prefix="/api/worker", tags=["Worker"])
 
@@ -39,8 +40,12 @@ async def get_worker_stats(
     })
     resolved_today = await db.complaints.count_documents({
         "assignedWorkerId": w_oid,
-        "status": {"$in": [ComplaintStatus.RESOLVED.value, ComplaintStatus.VERIFIED.value]},
-        "resolvedAt": {"$gte": start_of_today}
+        "status": {"$in": [ComplaintStatus.RESOLUTION_SUBMITTED.value, ComplaintStatus.RESOLVED.value, ComplaintStatus.VERIFIED.value]},
+        "$or": [
+            {"resolvedAt": {"$gte": start_of_today}},
+            {"resolutionSubmittedAt": {"$gte": start_of_today}},
+            {"updatedAt": {"$gte": start_of_today}},
+        ]
     })
     overdue_count = await db.complaints.count_documents({
         "assignedWorkerId": w_oid,
@@ -200,15 +205,15 @@ async def resolve_task_with_proof(
 
     updated = await transition_complaint_status(
         complaint_id=task_id,
-        new_status=ComplaintStatus.RESOLVED,
+        new_status=ComplaintStatus.RESOLUTION_SUBMITTED,
         current_user=current_user,
-        comment=f"Resolution submitted: {notes}",
+        comment=f"Resolution submitted with photo proof: {notes}. Awaiting district verification.",
         evidence=evidence,
     )
 
     return {
         "success": True,
-        "message": "Task marked as RESOLVED with proof",
+        "message": "Task marked as RESOLUTION_SUBMITTED with photo proof. Sent to District Admin for verification.",
         "task": updated,
         "aiVerification": ai_verification,
     }
@@ -236,3 +241,48 @@ async def get_worker_profile(
             "resolved": resolved,
         }
     }
+
+
+# ── 7. Worker Availability (Feature 7) ──────────────────────────────
+@router.post("/availability")
+async def update_worker_availability(
+    payload: dict = Body(...),
+    current_user: dict = Depends(require_worker),
+):
+    """Update field worker real-time availability status (ON_DUTY, OFF_DUTY, ON_LEAVE)."""
+    db = get_database()
+    worker_id = current_user.get("_id") or current_user.get("id")
+    w_oid = ObjectId(worker_id) if ObjectId.is_valid(worker_id) else worker_id
+    
+    new_status = payload.get("availability")
+    if new_status not in ["ON_DUTY", "OFF_DUTY", "ON_LEAVE"]:
+        raise HTTPException(status_code=400, detail="Invalid availability status. Must be ON_DUTY, OFF_DUTY, or ON_LEAVE.")
+        
+    result = await db.users.find_one_and_update(
+        {"_id": w_oid},
+        {"$set": {
+            "availability": new_status,
+            "last_active": datetime.now(timezone.utc)
+        }},
+        return_document=True
+    )
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Worker not found")
+        
+    return {
+        "success": True, 
+        "message": f"Availability updated to {new_status}",
+        "user": format_user_response(result)
+    }
+
+
+# ── 8. Worker Analytics (Feature 13) ───────────────────────────────
+@router.get("/analytics")
+async def get_my_worker_analytics(
+    current_user: dict = Depends(require_worker),
+):
+    """Get detailed performance metrics for the current worker."""
+    worker_id = current_user.get("_id") or current_user.get("id")
+    analytics = await get_worker_analytics(str(worker_id))
+    return {"success": True, "data": analytics}

@@ -12,6 +12,7 @@ class EnvConfig:
         # Never ship a reusable default signing key. Development instances get a
         # per-process key; deployed instances must set JWT_SECRET explicitly.
         self.JWT_SECRET = os.getenv("JWT_SECRET") or secrets.token_urlsafe(48)
+        self.JWT_ALGORITHM = "HS256"
         self.JWT_EXPIRES_MINUTES = int(os.getenv("JWT_EXPIRES_MINUTES", "1440"))
 
 env = EnvConfig()

@@ -75,5 +75,40 @@ export const adminService = {
     const res = await api.post('/admin/users/create-zonal-admin', payload);
     return res.data;
   },
+
+  async getAiInsights() {
+    const res = await api.get('/admin/ai-insights');
+    return res.data;
+  },
+
+  async getPredictions(days = 30) {
+    const res = await api.get('/admin/predictions', { params: { days } });
+    return res.data;
+  },
+
+  async getDistrictAnalytics() {
+    const res = await api.get('/admin/district-analytics');
+    return res.data;
+  },
+
+  async regenerateWorkerPassword(workerId) {
+    const res = await api.post(`/admin/workers/${workerId}/regenerate-password`);
+    return res.data;
+  },
+
+  async getEscalatedComplaints(params = {}) {
+    const res = await api.get('/admin/escalated', { params });
+    return res.data;
+  },
+
+  async takeEscalatedAction(id, payload) {
+    const res = await api.post(`/admin/escalated/${id}/action`, payload);
+    return res.data;
+  },
+
+  async getAdvancedAnalytics() {
+    const res = await api.get('/admin/analytics/advanced');
+    return res.data;
+  },
 };
 

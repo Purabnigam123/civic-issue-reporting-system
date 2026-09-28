@@ -50,7 +50,12 @@ export const NotificationProvider = ({ children }) => {
           const payload = JSON.parse(event.data);
           setLastEvent(payload);
 
-          if (payload.type === 'NOTIFICATION' || payload.type === 'COMPLAINT_STATUS_CHANGED') {
+          if (
+            payload.type === 'NOTIFICATION' || 
+            payload.event === 'NEW_NOTIFICATION' || 
+            payload.type === 'COMPLAINT_STATUS_CHANGED' ||
+            payload.event === 'STATUS_UPDATED'
+          ) {
             fetchNotifications();
           }
         } catch (e) {

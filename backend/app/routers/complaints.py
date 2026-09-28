@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Request, Body
-from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Request, Body, Query
+from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
 from math import radians, sin, cos, sqrt, atan2
 from hashlib import sha256
@@ -17,6 +17,10 @@ from ..services.district_service import detect_district_from_address
 from ..services.suspicious_service import evaluate_complaint_suspicion
 from ..services.status_service import transition_complaint_status
 from ..services.ai_service import analyze_image
+from ..services.priority_service import calculate_priority_score
+from ..services.eta_service import calculate_eta
+from ..services.duplicate_service import find_duplicates
+from ..services.assignment_service import auto_assign_worker_to_complaint
 from ..config.db import get_db
 
 router = APIRouter(prefix="/api/complaints", tags=["Complaints"])
@@ -171,6 +175,203 @@ async def get_public_stats():
         "stats": stats_payload,
         "data": {"stats": stats_payload}
     }
+
+
+# ── Nearby Complaints (Feature 1) ─────────────────────────────────
+async def _enrich_with_confirmations(db, items: list) -> list:
+    """Attach community_confirmations count and last_confirmed_at to each item."""
+    if not items:
+        return items
+    complaint_ids = [item["complaintId"] for item in items if item.get("complaintId")]
+    if not complaint_ids:
+        return items
+
+    # Aggregate: count + max confirmed_at per complaint_id
+    pipeline = [
+        {"$match": {"complaint_id": {"$in": complaint_ids}}},
+        {
+            "$group": {
+                "_id": "$complaint_id",
+                "count": {"$sum": 1},
+                "last_confirmed_at": {"$max": "$confirmed_at"},
+            }
+        },
+    ]
+    agg_cursor = db.complaint_confirmations.aggregate(pipeline)
+    agg_rows = await agg_cursor.to_list(None)
+    agg_map = {row["_id"]: row for row in agg_rows}
+
+    for item in items:
+        row = agg_map.get(item.get("complaintId"), {})
+        item["community_confirmations"] = int(row.get("count", 0))
+        last_at = row.get("last_confirmed_at")
+        item["last_confirmed_at"] = last_at.isoformat() if isinstance(last_at, datetime) else last_at
+
+    return items
+
+
+@router.get("/nearby")
+async def get_nearby_complaints(
+    latitude: float = Query(...),
+    longitude: float = Query(...),
+    radius: float = Query(100, ge=50, le=5000),
+    category: Optional[str] = None,
+    limit: int = Query(20, ge=1, le=50),
+):
+    """Get complaints near a geographic point. Public endpoint, safe fields only."""
+    db = get_db()
+
+    # Try geospatial query first
+    nearby_list = []
+    try:
+        geo_query: Dict[str, Any] = {
+            "location": {
+                "$nearSphere": {
+                    "$geometry": {"type": "Point", "coordinates": [longitude, latitude]},
+                    "$maxDistance": radius,
+                }
+            },
+            "status": {"$ne": ComplaintStatus.REJECTED.value},
+        }
+        if category:
+            geo_query["category"] = category
+
+        cursor = db.complaints.find(geo_query).limit(limit)
+        raw = await cursor.to_list(None)
+
+        for doc in raw:
+            try:
+                c_lat = float(doc.get("latitude"))
+                c_lng = float(doc.get("longitude"))
+                dist = _haversine_meters(latitude, longitude, c_lat, c_lng)
+            except (TypeError, ValueError):
+                dist = 0.0
+
+            nearby_list.append({
+                "id": str(doc["_id"]),
+                "complaintId": doc.get("complaintId"),
+                "category": doc.get("category"),
+                "status": doc.get("status"),
+                "priority": doc.get("priority", "MEDIUM"),
+                "description": (doc.get("description") or "")[:150],
+                "address": doc.get("address", ""),
+                "latitude": doc.get("latitude"),
+                "longitude": doc.get("longitude"),
+                "district_name": doc.get("district_name"),
+                "upvotes": int(doc.get("upvotes", 0)),
+                "images": (doc.get("images") or [])[:1],
+                "createdAt": doc.get("createdAt").isoformat() if isinstance(doc.get("createdAt"), datetime) else doc.get("createdAt"),
+                "distanceMeters": round(dist, 1),
+                "community_confirmations": 0,
+                "last_confirmed_at": None,
+            })
+    except Exception:
+        # Fallback: brute-force scan
+        query: Dict[str, Any] = {
+            "latitude": {"$exists": True, "$ne": None},
+            "longitude": {"$exists": True, "$ne": None},
+            "status": {"$ne": ComplaintStatus.REJECTED.value},
+        }
+        if category:
+            query["category"] = category
+
+        cursor = db.complaints.find(query).sort("createdAt", -1).limit(200)
+        raw = await cursor.to_list(None)
+        for doc in raw:
+            try:
+                c_lat = float(doc.get("latitude"))
+                c_lng = float(doc.get("longitude"))
+                dist = _haversine_meters(latitude, longitude, c_lat, c_lng)
+                if dist <= radius:
+                    nearby_list.append({
+                        "id": str(doc["_id"]),
+                        "complaintId": doc.get("complaintId"),
+                        "category": doc.get("category"),
+                        "status": doc.get("status"),
+                        "priority": doc.get("priority", "MEDIUM"),
+                        "description": (doc.get("description") or "")[:150],
+                        "address": doc.get("address", ""),
+                        "latitude": c_lat,
+                        "longitude": c_lng,
+                        "district_name": doc.get("district_name"),
+                        "upvotes": int(doc.get("upvotes", 0)),
+                        "images": (doc.get("images") or [])[:1],
+                        "createdAt": doc.get("createdAt").isoformat() if isinstance(doc.get("createdAt"), datetime) else doc.get("createdAt"),
+                        "distanceMeters": round(dist, 1),
+                        "community_confirmations": 0,
+                        "last_confirmed_at": None,
+                    })
+            except (TypeError, ValueError):
+                continue
+        nearby_list.sort(key=lambda x: x["distanceMeters"])
+        nearby_list = nearby_list[:limit]
+
+    # Enrich all results with real confirmation counts in one aggregation round-trip
+    nearby_list = await _enrich_with_confirmations(db, nearby_list)
+
+    return {"success": True, "total": len(nearby_list), "complaints": nearby_list}
+
+
+# ── Civic Map Data (Feature 3) ────────────────────────────────────
+@router.get("/map")
+async def get_map_complaints(
+    category: Optional[str] = None,
+    status_filter: Optional[str] = Query(None, alias="status"),
+    priority: Optional[str] = None,
+    district_id: Optional[str] = None,
+    limit: int = Query(500, ge=1, le=1000),
+):
+    """Get all geolocated complaints for public civic map visualization."""
+    db = get_db()
+    query: Dict[str, Any] = {
+        "latitude": {"$exists": True, "$ne": None},
+        "longitude": {"$exists": True, "$ne": None},
+        "status": {"$ne": ComplaintStatus.REJECTED.value},
+    }
+    if category:
+        query["category"] = category
+    if status_filter:
+        query["status"] = status_filter
+    if priority:
+        query["priority"] = priority
+    if district_id:
+        query["district_id"] = district_id.lower()
+
+    cursor = db.complaints.find(query, {
+        "_id": 1, "complaintId": 1, "latitude": 1, "longitude": 1,
+        "category": 1, "priority": 1, "status": 1, "address": 1,
+        "district_id": 1, "district_name": 1, "upvotes": 1,
+        "createdAt": 1, "slaStatus": 1, "description": 1, "images": 1,
+    }).sort("createdAt", -1).limit(limit)
+
+    raw = await cursor.to_list(None)
+    points = []
+    for doc in raw:
+        try:
+            lat = float(doc.get("latitude"))
+            lng = float(doc.get("longitude"))
+        except (TypeError, ValueError):
+            continue
+        if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+            continue
+
+        points.append({
+            "id": str(doc["_id"]),
+            "complaintId": doc.get("complaintId"),
+            "lat": lat,
+            "lng": lng,
+            "category": doc.get("category", "other"),
+            "priority": doc.get("priority", "MEDIUM"),
+            "status": doc.get("status"),
+            "address": doc.get("address", ""),
+            "district_name": doc.get("district_name"),
+            "upvotes": int(doc.get("upvotes", 0)),
+            "description": (doc.get("description") or "")[:100],
+            "images": (doc.get("images") or [])[:1],
+            "createdAt": doc.get("createdAt").isoformat() if isinstance(doc.get("createdAt"), datetime) else doc.get("createdAt"),
+        })
+
+    return {"success": True, "total": len(points), "points": points}
 
 
 @router.post("/check-duplicate")
@@ -488,6 +689,33 @@ async def create_complaint(
         "evidence": None,
     }
 
+    # 5. AI Priority Score calculation
+    priority_data = None
+    try:
+        priority_data = await calculate_priority_score(
+            category=complaint_category.value,
+            latitude=latitude_value,
+            longitude=longitude_value,
+            ai_confidence=ai_confidence,
+            upvotes=0,
+            created_at=now,
+        )
+        priority = priority_data["priority_level"]
+    except Exception:
+        pass
+
+    # 6. AI ETA calculation
+    eta_data = None
+    try:
+        eta_data = await calculate_eta(
+            category=complaint_category.value,
+            priority=priority,
+            district_id=district_id,
+            created_at=now,
+        )
+    except Exception:
+        pass
+
     complaint_doc = {
         "citizenId": user["_id"] if user else None,
         "category": complaint_category.value,
@@ -506,6 +734,10 @@ async def create_complaint(
         "voiceNote": voice_note,
         "latitude": latitude_value,
         "longitude": longitude_value,
+        "location": {
+            "type": "Point",
+            "coordinates": [longitude_value, latitude_value],
+        },
         "address": address,
         "district_id": district_id,
         "district_name": district_name,
@@ -530,9 +762,25 @@ async def create_complaint(
         "isAnonymous": anonymous_flag,
         "reporterName": (reporterName or "Anonymous").strip() if anonymous_flag else "",
         "reporterPhone": normalized_reporter_phone if anonymous_flag else "",
+        "upvotes": 0,
         "createdAt": now,
         "updatedAt": now,
     }
+
+    # Add AI priority data if available
+    if priority_data:
+        complaint_doc["priority_score"] = priority_data["priority_score"]
+        complaint_doc["priority_factors"] = priority_data["priority_factors"]
+        complaint_doc["priority_calculated_at"] = now
+
+    # Add ETA data if available
+    if eta_data:
+        complaint_doc["estimated_duration_hours"] = eta_data["estimated_duration_hours"]
+        complaint_doc["estimated_resolution_at"] = now + timedelta(hours=eta_data["estimated_duration_hours"])
+        complaint_doc["eta_confidence"] = eta_data["eta_confidence"]
+        complaint_doc["eta_factors"] = eta_data["eta_factors"]
+        complaint_doc["worker_shortage"] = eta_data["worker_shortage"]
+        complaint_doc["eta_updated_at"] = now
 
     inserted = False
     for _ in range(5):
@@ -550,6 +798,36 @@ async def create_complaint(
         raise HTTPException(status_code=500, detail="Failed to allocate unique complaint ID. Please try again.")
 
     formatted_new = format_complaint_dict(complaint_doc)
+
+    # Auto-assign worker using AI if complaint is genuine and submitted
+    if not is_suspicious and complaint_doc.get("status") == ComplaintStatus.SUBMITTED.value:
+        try:
+            auto_assign_res = await auto_assign_worker_to_complaint(str(complaint_doc["_id"]))
+            if auto_assign_res and auto_assign_res.get("complaint"):
+                formatted_new = auto_assign_res["complaint"]
+        except Exception as auto_err:
+            print(f"Auto-assign trigger error: {auto_err}")
+
+    # Run duplicate detection (non-blocking, attached to response)
+    duplicate_info = None
+    try:
+        dup_result = await find_duplicates(
+            category=complaint_category.value,
+            latitude=latitude_value,
+            longitude=longitude_value,
+            description=description,
+            exclude_complaint_id=complaint_doc.get("complaintId"),
+        )
+        if dup_result.get("is_duplicate"):
+            duplicate_info = {
+                "is_duplicate": True,
+                "score": dup_result["duplicate_score"],
+                "similar_count": dup_result["total_candidates"],
+                "reasons": dup_result["reasons"],
+            }
+    except Exception:
+        pass
+
     return {
         "success": True,
         "message": "Complaint submitted successfully",
@@ -658,6 +936,169 @@ async def get_complaint_by_id(id: str, user: dict = Depends(get_current_user)):
     formatted_found = format_complaint_dict(complaint)
     return {
         "success": True,
+        "complaint": formatted_found,
+        "data": {"complaint": formatted_found}
+    }
+
+
+# ── Community Confirmation / "Still Exists" (Feature 3) ─────────
+@router.post("/{complaint_id}/confirm")
+async def confirm_complaint_still_exists(
+    complaint_id: str,
+    payload: dict = Body(...),
+    user: Optional[dict] = Depends(get_current_user_optional),
+):
+    """
+    Location-verified 'Still Exists' confirmation.
+    - Validates user is within 100 metres of the complaint.
+    - One confirmation per user per complaint (unique index enforced in DB).
+    - Never stores or returns the user's exact GPS coordinates.
+    """
+    latitude = payload.get("latitude")
+    longitude = payload.get("longitude")
+    anonymous_fingerprint = payload.get("fingerprint", "")  # for unauthenticated users
+
+    if latitude is None or longitude is None:
+        raise HTTPException(status_code=400, detail="latitude and longitude are required.")
+
+    try:
+        user_lat = float(latitude)
+        user_lng = float(longitude)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="latitude and longitude must be numeric.")
+
+    # Resolve complaint
+    db = get_db()
+    id_filter: Dict[str, Any] = {"complaintId": complaint_id}
+    if ObjectId.is_valid(complaint_id):
+        id_filter = {"$or": [{"complaintId": complaint_id}, {"_id": ObjectId(complaint_id)}]}
+
+    complaint = await db.complaints.find_one(id_filter)
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found.")
+
+    if complaint.get("status") == ComplaintStatus.REJECTED.value:
+        raise HTTPException(status_code=400, detail="Cannot confirm a rejected complaint.")
+
+    # --- Server-side 100 m radius check ---
+    try:
+        comp_lat = float(complaint.get("latitude"))
+        comp_lng = float(complaint.get("longitude"))
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=422, detail="Complaint has no valid location data.")
+
+    distance_m = _haversine_meters(user_lat, user_lng, comp_lat, comp_lng)
+    CONFIRM_RADIUS_M = 100.0
+    if distance_m > CONFIRM_RADIUS_M:
+        raise HTTPException(
+            status_code=403,
+            detail=f"You must be within 100 metres of this issue to confirm it still exists. "
+                   f"You are currently {round(distance_m)} m away.",
+        )
+
+    # --- Build unique user identifier ---
+    if user:
+        user_id = str(user["_id"])
+    elif anonymous_fingerprint:
+        user_id = f"anon:{anonymous_fingerprint}"
+    else:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication or a unique fingerprint is required to confirm.",
+        )
+
+    now = datetime.now(timezone.utc)
+    canonical_complaint_id = complaint.get("complaintId") or str(complaint["_id"])
+
+    # --- Insert confirmation (unique index will reject duplicates) ---
+    try:
+        await db.complaint_confirmations.insert_one({
+            "complaint_id": canonical_complaint_id,
+            "user_id": user_id,
+            "confirmed_at": now,
+            # Store rounded distance only — never exact user GPS
+            "distance_meters": round(distance_m, 1),
+        })
+    except DuplicateKeyError:
+        # Already confirmed — return current counts gracefully
+        count = await db.complaint_confirmations.count_documents(
+            {"complaint_id": canonical_complaint_id}
+        )
+        last_doc = await db.complaint_confirmations.find_one(
+            {"complaint_id": canonical_complaint_id},
+            sort=[("confirmed_at", -1)],
+        )
+        last_at = last_doc["confirmed_at"].isoformat() if last_doc else None
+        return {
+            "success": True,
+            "already_confirmed": True,
+            "community_confirmations": count,
+            "last_confirmed_at": last_at,
+            "message": "You have already confirmed that this issue exists.",
+        }
+
+    # --- Return updated aggregate counts ---
+    count = await db.complaint_confirmations.count_documents(
+        {"complaint_id": canonical_complaint_id}
+    )
+    return {
+        "success": True,
+        "already_confirmed": False,
+        "community_confirmations": count,
+        "last_confirmed_at": now.isoformat(),
+        "message": "Thank you — your confirmation has been recorded.",
+    }
+
+
+# ── Rating (Feature 16) ──────────────────────────────────────────
+@router.post("/{complaint_id}/rating")
+async def rate_complaint(
+    complaint_id: str,
+    payload: dict = Body(...),
+    user: dict = Depends(get_current_user),
+):
+    """Submit citizen satisfaction rating and feedback for a resolved complaint."""
+    db = get_db()
+    rating = payload.get("rating")
+    feedback = payload.get("feedback")
+    
+    if rating is None or not isinstance(rating, int) or rating < 1 or rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be an integer between 1 and 5.")
+        
+    id_filter = {"complaintId": complaint_id}
+    if ObjectId.is_valid(complaint_id):
+        id_filter = {"$or": [{"complaintId": complaint_id}, {"_id": ObjectId(complaint_id)}]}
+
+    complaint = await db.complaints.find_one(id_filter)
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found.")
+        
+    if complaint.get("citizenId") != user["_id"]:
+        raise HTTPException(status_code=403, detail="You can only rate your own complaints.")
+        
+    if complaint.get("status") not in [ComplaintStatus.RESOLVED.value, ComplaintStatus.VERIFIED.value, ComplaintStatus.CLOSED.value]:
+        raise HTTPException(status_code=400, detail="You can only rate resolved or verified complaints.")
+        
+    now = datetime.now(timezone.utc)
+    
+    update_doc = {
+        "citizen_rating": rating,
+        "citizen_feedback": feedback,
+        "rated_at": now,
+        "updatedAt": now
+    }
+    
+    from pymongo import ReturnDocument
+    updated = await db.complaints.find_one_and_update(
+        {"_id": complaint["_id"]},
+        {"$set": update_doc},
+        return_document=ReturnDocument.AFTER
+    )
+    
+    formatted_found = format_complaint_dict(updated)
+    return {
+        "success": True,
+        "message": "Rating submitted successfully.",
         "complaint": formatted_found,
         "data": {"complaint": formatted_found}
     }
